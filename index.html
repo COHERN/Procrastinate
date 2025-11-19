@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rough Draft · Quote Tool</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #e7e2d7;
+      color: #111;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+    .page {
+      max-width: 1100px;
+      width: 100%;
+      margin: 2rem;
+      background: #f7f4ec;
+      border: 1px solid #111;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+      display: grid;
+      grid-template-columns: minmax(260px, 1.1fr) minmax(360px, 1.7fr);
+    }
+    @media (max-width: 840px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .left {
+      border-right: 1px solid #111;
+      padding: 1.8rem 1.6rem 1.6rem;
+      background: #f0ece3;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    @media (max-width: 840px) {
+      .left {
+        border-right: none;
+        border-bottom: 1px solid #111;
+      }
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border-bottom: 1px solid #111;
+      padding-bottom: 0.6rem;
+      margin-bottom: 0.8rem;
+    }
+    .logo span {
+      display: inline-block;
+      padding: 0.05rem 0.3rem;
+      border: 1px solid #111;
+      margin-right: 0.4rem;
+      background: #111;
+      color: #f7f4ec;
+    }
+    .tagline {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin-bottom: 1.3rem;
+    }
+    .tagline strong {
+      font-weight: 600;
+    }
+    .bundle-list h2 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin: 0 0 0.5rem;
+    }
+    .bundle {
+      border: 1px solid #111;
+      padding: 0.6rem 0.7rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      background: #f7f4ec;
+    }
+    .bundle-title {
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.8rem;
+      margin-bottom: 0.15rem;
+    }
+    .bundle-main {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 0.15rem;
+    }
+    .bundle-notes {
+      font-size: 0.78rem;
+      color: #444;
+    }
+    .footnote {
+      font-size: 0.75rem;
+      color: #555;
+      margin-top: 0.75rem;
+      border-top: 1px solid #111;
+      padding-top: 0.5rem;
+    }
+
+    .right {
+      padding: 1.8rem 1.8rem 2rem;
+      background: #fdfbf6;
+    }
+    h1 {
+      margin-top: 0;
+      margin-bottom: 0.9rem;
+      letter-spacing: 0.08em;
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+    .pill {
+      display: inline-block;
+      border: 1px solid #111;
+      border-radius: 999px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1.1rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.9rem 1.1rem;
+      margin-bottom: 1.2rem;
+    }
+    label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #555;
+      display: block;
+      margin-bottom: 0.1rem;
+    }
+    input[type="number"], select {
+      width: 100%;
+      padding: 0.45rem 0.55rem;
+      border-radius: 0;
+      border: 1px solid #111;
+      background: #fdfbf6;
+      color: #111;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+    input[type="number"]:focus, select:focus {
+      outline: 2px solid #111;
+      outline-offset: 1px;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.5rem 0 1rem;
+      font-size: 0.8rem;
+      color: #333;
+    }
+    button {
+      background: #111;
+      border: 1px solid #111;
+      color: #fdfbf6;
+      padding: 0.55rem 1.4rem;
+      font-size: 0.83rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 0.3rem;
+    }
+    button:hover {
+      background: #fdfbf6;
+      color: #111;
+    }
+    .results {
+      margin-top: 1.5rem;
+      padding-top: 1.1rem;
+      border-top: 1px solid #111;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.9rem 1.4rem;
+    }
+    .results h2 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #555;
+      margin: 0 0 0.3rem;
+    }
+    .value-main {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .muted {
+      color: #555;
+      font-size: 0.8rem;
+    }
+    .tag {
+      display: inline-block;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      border: 1px solid #111;
+      margin-left: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .tag-good {
+      background: #111;
+      color: #fdfbf6;
+    }
+    .tag-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <aside class="left">
+      <div>
+        <div class="logo">
+          <span>Rough</span>DRAFT PRINTING
+        </div>
+        <div class="tagline">
+          Small-run screen printing for bands, shops, and anyone who wants shirts that actually feel like something you’d wear.
+        </div>
+
+        <div class="bundle-list">
+          <h2>Bundle Menu</h2>
+
+          <div class="bundle">
+            <div class="bundle-title">Starter</div>
+            <div class="bundle-main">
+              <span>24 shirts · 1 color</span>
+              <strong>$299</strong>
+            </div>
+            <div class="bundle-notes">
+              Great entry point for new clients. Gildan Heavy Cotton included.
+            </div>
+          </div>
+
+          <div class="bundle">
+            <div class="bundle-title">Small Business Favorite</div>
+            <div class="bundle-main">
+              <span>36 shirts · 1 color</span>
+              <strong>$399</strong>
+            </div>
+            <div class="bundle-notes">
+              Most common size for cafés, barbers, small shops.
+            </div>
+          </div>
+
+          <div class="bundle">
+            <div class="bundle-title">Two-Color Value</div>
+            <div class="bundle-main">
+              <span>48 shirts · 2 colors</span>
+              <strong>$499</strong>
+            </div>
+            <div class="bundle-notes">
+              More color, still manageable runs.
+            </div>
+          </div>
+
+          <div class="bundle">
+            <div class="bundle-title">Premium Run</div>
+            <div class="bundle-main">
+              <span>60 shirts · 2 colors</span>
+              <strong>$599</strong>
+            </div>
+            <div class="bundle-notes">
+              Best cost-per-shirt for clients with regular staff.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footnote">
+        Default blank: <strong>Gildan Heavy Cotton</strong>.<br>
+        Upgrade to <strong>Bella+Canvas 3001</strong> by choosing it in the quote calculator (+approx. $2/shirt).
+      </div>
+    </aside>
+
+    <main class="right">
+      <h1>Internal Quote Tool</h1>
+      <div class="pill">For your use only · Not customer-facing</div>
+
+      <div class="grid">
+        <div>
+          <label for="qty">Quantity (shirts)</label>
+          <input type="number" id="qty" value="24" min="1">
+        </div>
+
+        <div>
+          <label for="blankType">Blank Type</label>
+          <select id="blankType" onchange="updateGarmentCostFromBlank()">
+            <option value="gildan" selected>Gildan Heavy Cotton (default)</option>
+            <option value="bella">Bella+Canvas 3001 (upgrade)</option>
+            <option value="custom">Custom / other (manual)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="garmentCost">Garment Cost Each ($)</label>
+          <input type="number" id="garmentCost" value="3.00" step="0.01" min="0">
+        </div>
+
+        <div>
+          <label for="colorsFront">Colors – Front</label>
+          <input type="number" id="colorsFront" value="1" min="0">
+        </div>
+
+        <div>
+          <label for="colorsBack">Colors – Back</label>
+          <input type="number" id="colorsBack" value="0" min="0">
+        </div>
+
+        <div>
+          <label for="screenCost">Screen Cost per Color ($)</label>
+          <input type="number" id="screenCost" value="12" step="0.01" min="0">
+        </div>
+
+        <div>
+          <label for="hourlyRate">Your Hourly Rate ($/hr)</label>
+          <input type="number" id="hourlyRate" value="33" step="0.50" min="0">
+        </div>
+
+        <div>
+          <label for="setupMin">Setup Minutes</label>
+          <input type="number" id="setupMin" value="45" min="0">
+        </div>
+
+        <div>
+          <label for="printMin">Print Minutes</label>
+          <input type="number" id="printMin" value="60" min="0">
+        </div>
+
+        <div>
+          <label for="cleanupMin">Cleanup Minutes</label>
+          <input type="number" id="cleanupMin" value="20" min="0">
+        </div>
+
+        <div>
+          <label for="margin">Desired Margin (%)</label>
+          <input type="number" id="margin" value="45" min="0" max="90">
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label for="extraColorFee">
+            Extra Color Cost per Shirt ($)
+          </label>
+          <input type="number" id="extraColorFee" value="0.40" step="0.05" min="0">
+        </div>
+        <div>
+          <label for="rushFlat">Rush Fee (Flat $)</label>
+          <input type="number" id="rushFlat" value="0" step="1" min="0">
+        </div>
+        <div>
+          <label for="rushPercent">Rush Fee (%)</label>
+          <input type="number" id="rushPercent" value="0" min="0" max="100">
+        </div>
+        <div>
+          <label for="rushMultiplier">Same-Day Rush Multiplier</label>
+          <input type="number" id="rushMultiplier" value="1" step="0.1" min="1">
+        </div>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="isReorder">
+        <label for="isReorder">Reorder (reuse screens – reduced screen cost)</label>
+      </div>
+
+      <button type="button" onclick="calculateQuote()">Calculate Quote</button>
+
+      <div class="results" id="results" style="display:none;">
+        <div>
+          <h2>Total Quote</h2>
+          <div class="value-main" id="totalPrice">$0.00</div>
+          <div class="muted" id="perShirt"></div>
+        </div>
+        <div>
+          <h2>Your Cost</h2>
+          <div class="value-main" id="totalCost">$0.00</div>
+          <div class="muted" id="costBreakdown"></div>
+        </div>
+        <div>
+          <h2>Profit & Margin</h2>
+          <div class="value-main" id="profit">$0.00</div>
+          <div class="muted" id="marginSummary"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const GILDAN_COST = 3.00;
+    const BELLA_COST  = 5.00;
+
+    function updateGarmentCostFromBlank() {
+      const blankType = document.getElementById('blankType').value;
+      let cost = GILDAN_COST;
+
+      if (blankType === 'gildan') {
+        cost = GILDAN_COST;
+      } else if (blankType === 'bella') {
+        cost = BELLA_COST;
+      } else if (blankType === 'custom') {
+        return;
+      }
+
+      document.getElementById('garmentCost').value = cost.toFixed(2);
+    }
+
+    function calculateQuote() {
+      const qty          = Number(document.getElementById('qty').value || 0);
+      const garmentCost  = Number(document.getElementById('garmentCost').value || 0);
+      const colorsFront  = Number(document.getElementById('colorsFront').value || 0);
+      const colorsBack   = Number(document.getElementById('colorsBack').value || 0);
+      const screenCost   = Number(document.getElementById('screenCost').value || 0);
+      const hourlyRate   = Number(document.getElementById('hourlyRate').value || 0);
+      const setupMin     = Number(document.getElementById('setupMin').value || 0);
+      const printMin     = Number(document.getElementById('printMin').value || 0);
+      const cleanupMin   = Number(document.getElementById('cleanupMin').value || 0);
+      const marginPct    = Number(document.getElementById('margin').value || 0);
+      const isReorder    = document.getElementById('isReorder').checked;
+
+      const extraColorFee = Number(document.getElementById('extraColorFee').value || 0);
+      const rushFlat       = Number(document.getElementById('rushFlat').value || 0);
+      const rushPercent    = Number(document.getElementById('rushPercent').value || 0);
+      const rushMultiplier = Number(document.getElementById('rushMultiplier').value || 1);
+
+      if (!qty || !garmentCost) {
+        alert("Enter at least quantity and garment cost.");
+        return;
+      }
+
+      const garmentTotal = qty * garmentCost;
+
+      const totalMin   = setupMin + printMin + cleanupMin;
+      const laborHours = totalMin / 60;
+      const laborTotal = laborHours * hourlyRate;
+
+      const numColors = colorsFront + colorsBack;
+      let screensTotal = numColors * screenCost;
+      if (isReorder) {
+        screensTotal = numColors * screenCost * 0.25;
+      }
+
+      const extraColorCount = Math.max(0, numColors - 1);
+      const extraColorPrintTotal = extraColorCount * qty * extraColorFee;
+
+      const trueCost = garmentTotal + laborTotal + screensTotal + extraColorPrintTotal;
+
+      const margin = marginPct / 100;
+      const basePrice = trueCost / (1 - margin);
+
+      const rushPercentAmount = (rushPercent / 100) * basePrice;
+      const multiplierAmount  = (rushMultiplier - 1) * basePrice;
+      const rushTotal = rushFlat + rushPercentAmount + multiplierAmount;
+
+      const finalPrice = basePrice + rushTotal;
+      const pricePerShirt = finalPrice / qty;
+
+      const profit = finalPrice - trueCost;
+      const actualMargin = (profit / finalPrice) * 100;
+
+      const results = document.getElementById('results');
+      results.style.display = 'grid';
+
+      document.getElementById('totalPrice').textContent = "$" + finalPrice.toFixed(2);
+      document.getElementById('perShirt').textContent   = "$" + pricePerShirt.toFixed(2) + " per shirt";
+
+      let costText =
+        "Garments: $" + garmentTotal.toFixed(2) +
+        " · Labor: $" + laborTotal.toFixed(2) +
+        " · Screens: $" + screensTotal.toFixed(2);
+      if (extraColorPrintTotal > 0) {
+        costText += " · Extra colors: $" + extraColorPrintTotal.toFixed(2);
+      }
+      if (rushTotal > 0) {
+        costText += " · Rush: $" + rushTotal.toFixed(2) + " (charged on top)";
+      }
+
+      document.getElementById('totalCost').textContent  = "$" + trueCost.toFixed(2);
+      document.getElementById('costBreakdown').textContent = costText;
+
+      const profitTagClass = actualMargin >= marginPct - 1 ? "tag-good" : "tag-warning";
+      document.getElementById('profit').textContent = "$" + profit.toFixed(2);
+      document.getElementById('marginSummary').innerHTML =
+        "Actual margin: " + actualMargin.toFixed(1) + "% " +
+        `<span class="tag ${profitTagClass}">${actualMargin >= marginPct - 1 ? "On Target" : "Low"}</span>`;
+    }
+
+    updateGarmentCostFromBlank();
+  </script>
+</body>
+</html>
