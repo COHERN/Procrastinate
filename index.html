@@ -5,7 +5,6 @@
   <title>Procrastinator Prints</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Mono font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -14,113 +13,117 @@
 </head>
 <body>
 
-  <header>
-    <h1>PROCRASTINATOR PRINTS!</h1>
-  </header>
+<header>
+  <h1>PROCRASTINATOR PRINTS!</h1>
+</header>
 
-  <main>
+<main>
 
-    <section>
-      <h2>JOB DETAILS</h2>
+  <!-- CONTROLS (VISUALLY QUIET) -->
+  <section class="controlsPanel">
+    <h2>EDIT JOB DETAILS</h2>
 
-      <div class="grid">
-        <label>
-          QTY (MIN 24)
-          <input id="qty" type="number" min="24" step="1" value="24" />
-        </label>
+    <div class="grid">
+      <label>QTY (MIN 24)
+        <input id="qty" type="number" min="24" value="24">
+      </label>
 
-        <label>
-          GARMENT
-          <select id="garment">
-            <option value="bella">BELLA 3001</option>
-            <option value="gildan">GILDAN 5000</option>
-            <option value="cc">COMFORT COLORS 1717</option>
-            <option value="next">NEXT LEVEL 3600</option>
-          </select>
-        </label>
+      <label>GARMENT
+        <select id="garment">
+          <option>BELLA 3001</option>
+          <option>GILDAN 5000</option>
+          <option>COMFORT COLORS 1717</option>
+          <option>NEXT LEVEL 3600</option>
+        </select>
+      </label>
 
-        <label>
-          BLANK COST (INTERNAL) / SHIRT
-          <input id="blankCost" type="number" min="0" step="0.01" value="4.01" />
-        </label>
+      <label>BLANK COST / SHIRT
+        <input id="blankCost" type="number" step="0.01" value="4.01">
+      </label>
 
-        <label>
-          GARMENT COLOR
-          <input id="garmentColor" type="text" value="NATURAL" />
-        </label>
+      <label>GARMENT COLOR
+        <input id="garmentColor" type="text" value="NATURAL">
+      </label>
 
-        <label>
-          PRINT COLORS (INK)
-          <input id="inkColors" type="text" value="BLACK" />
-        </label>
+      <label>PRINT COLORS (INK)
+        <input id="inkColors" type="text" value="BLACK">
+      </label>
 
-        <label>
-          COLORS (1–4)
-          <input id="colors" type="number" min="1" max="4" step="1" value="1" />
-        </label>
+      <label>COLORS (1–4)
+        <input id="colors" type="number" min="1" max="4" value="1">
+      </label>
 
-        <label>
-          PRINT LOCATION
-          <select id="locations">
-            <option value="1">FRONT</option>
-            <option value="2">FRONT + BACK</option>
-          </select>
-        </label>
-      </div>
-
-      <div class="row">
-        <button id="getQuote" type="button">GET QUOTE</button>
-      </div>
-    </section>
-
-    <section>
-      <h2>PRICE</h2>
-      <div class="price">
-        <div id="perShirt">$— / SHIRT</div>
-        <div id="total">$— TOTAL</div>
-      </div>
-    </section>
-
-    <section class="terms">
-      <h2>TERMS & PRICING NOTES</h2>
-
-      <p>
-        Pricing is based on the print details listed above.<br>
-        Screen printing has a minimum of 24 pieces and a maximum of four colors per print location.<br>
-        Any changes to print colors or locations will require an updated quote.
-      </p>
-
-      <p class="bold">
-        A 50% non-refundable deposit is required to begin production.<br>
-        The remaining balance is due at delivery.
-      </p>
-    </section>
-
-    <section id="internal">
-      <h2 class="internal">INTERNAL ONLY</h2>
-
-      <div class="internal-grid">
-        <div>SCREENS:</div><div id="screens">—</div>
-        <div>MARGIN:</div><div id="marginPct">—</div>
-        <div>MARGIN ($):</div><div id="marginDollar">—</div>
-      </div>
-
-      <details>
-        <summary>COST BREAKDOWN</summary>
-        <ul id="costs"></ul>
-      </details>
-    </section>
-
-    <div class="controls">
-      <label class="checkbox">
-        <input id="clientView" type="checkbox" />
-        CLIENT / PRINT VIEW
+      <label>PRINT LOCATION
+        <select id="locations">
+          <option value="1">FRONT</option>
+          <option value="2">FRONT + BACK</option>
+        </select>
       </label>
     </div>
 
-  </main>
+    <button id="getQuote">GET QUOTE</button>
+  </section>
 
-  <!-- defer ensures JS runs after DOM exists -->
-  <script src="quote.js" defer></script>
+  <!-- PRICE -->
+  <section>
+    <h2>PRICE</h2>
+    <div class="price">
+      <div id="perShirt">$— / SHIRT</div>
+      <div id="total">$— TOTAL</div>
+    </div>
+  </section>
+
+  <!-- JOB DETAILS (INTERNAL + TOGGLEABLE) -->
+  <section id="jobDetails">
+    <h2>JOB DETAILS</h2>
+    <div class="kv">
+      <div>QTY:</div><div id="jdQty">—</div>
+      <div>GARMENT:</div><div id="jdGarment">—</div>
+      <div>GARMENT COLOR:</div><div id="jdGarmentColor">—</div>
+      <div>PRINT COLORS:</div><div id="jdInkColors">—</div>
+      <div>COLORS:</div><div id="jdColors">—</div>
+      <div>PRINT LOCATION:</div><div id="jdLocation">—</div>
+    </div>
+  </section>
+
+  <!-- TERMS -->
+  <section class="terms">
+    <h2>TERMS & PRICING NOTES</h2>
+    <p>
+      Pricing is based on the print details listed above.<br>
+      Screen printing has a minimum of 24 pieces and a maximum of four colors per print location.<br>
+      Any changes to print colors or locations will require an updated quote.
+    </p>
+    <p class="bold">
+      A 50% non-refundable deposit is required to begin production.<br>
+      The remaining balance is due at delivery.
+    </p>
+  </section>
+
+  <!-- INTERNAL ONLY -->
+  <section id="internal">
+    <h2 class="internal">INTERNAL ONLY</h2>
+
+    <div class="internal-grid">
+      <div>PROFIT ($):</div><div id="profit">$—</div>
+      <div>MARGIN:</div><div id="marginPct">—</div>
+    </div>
+
+    <details>
+      <summary>COST BREAKDOWN</summary>
+      <ul id="costs"></ul>
+    </details>
+  </section>
+
+  <div class="controls">
+    <label>
+      <input id="clientView" type="checkbox">
+      CLIENT / PRINT VIEW
+    </label>
+  </div>
+
+</main>
+
+<script src="quote.js" defer></script>
 </body>
 </html>
