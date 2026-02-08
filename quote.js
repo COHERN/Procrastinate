@@ -1,82 +1,144 @@
+// quote.js — Procrastinator Prints Quote Tool (internal)
+// Locks shop economics in code. Job details editable in UI.
+// Enforces: min qty 24, max colors 4, screens = colors * locations.
+
 // ---- LOCKED SHOP ECONOMICS (CODE ONLY)
 const COSTS = {
-  blank: 4.01,            // Bella 3001 baseline
-  inkPerColor: 0.02,
-  laborPerShirt: 0.67,
-  setup: 40,
-  screenPrep: 4,
-  spoilage: 10,
+  inkPerColorPerLocationPerShirt: 0.02,
+  printLaborPerShirt: 0.67,
+  setupLaborPerJob: 40,
+  screenPrepPerScreenPerJob: 4,
+  spoilageBufferPerJob: 10,
 };
 
-// Bella-based pricing table (24+)
-function pricePerShirt(qty) {
+// Bella-based client pricing table (24+ minimum)
+function clientPricePerShirt(qty) {
+  // You can tweak these later, but this is the working baseline.
   if (qty >= 100) return 11;
   if (qty >= 50) return 13;
   if (qty >= 25) return 15;
-  return 15;
+  return 15; // 24 falls here
 }
-
-// ---- ELEMENTS
-const el = id => document.getElementById(id);
-
-const inputs = [
-  "qty","garment","garmentColor","inkColors","colors","locations"
-];
-
-inputs.forEach(id => el(id).addEventListener("input", calc));
-el("clientView").addEventListener("change", toggleClientView);
 
 function money(n) {
-  return `$${n.toFixed(2)}`;
+  const x = Number(n) || 0;
+  return `$${x.toFixed(2)}`;
 }
 
-function calc() {
-  let qty = Math.max(24, Number(el("qty").value));
-  el("qty").value = qty;
+document.addEventListener("DOMContentLoaded", () => {
+  const $ = (id) => document.getElementById(id);
 
-  let colors = Math.min(4, Math.max(1, Number(el("colors").value)));
-  el("colors").value = colors;
+  // Inputs
+  const qtyEl = $("qty");
+  const blankCostEl = $("blankCost");
+  const colorsEl = $("colors");
+  const locationsEl = $("locations");
 
-  let locations = Number(el("locations").value);
-  let screens = colors * locations;
+  // Outputs
+  const perShirtEl = $("perShirt");
+  const totalEl = $("total");
 
-  let per = pricePerShirt(qty);
-  let total = per * qty;
+  const screensEl = $("screens");
+  const marginPctEl = $("marginPct");
+  const marginDollarEl = $("marginDollar");
+  const costsEl = $("costs");
 
-  // internal cost
-  let blankCost = COSTS.blank * qty;
-  let ink = COSTS.inkPerColor * colors * locations * qty;
-  let labor = COSTS.laborPerShirt * qty;
-  let screenPrep = COSTS.screenPrep * screens;
+  const getQuoteBtn = $("getQuote");
 
-  let internal =
-    blankCost + ink + labor +
-    COSTS.setup + screenPrep + COSTS.spoilage;
+  // Client view toggle
+  const clientViewEl = $("clientView");
+  const internalSectionEl = $("internal");
 
-  let margin = total - internal;
-  let marginPct = (margin / total) * 100;
+  function toggleClientView() {
+    internalSectionEl.style.display = clientViewEl.checked ? "none" : "block";
+  }
 
-  el("perShirt").textContent = `${money(per)} / SHIRT`;
-  el("total").textContent = `${money(total)} TOTAL`;
+  function sanitize() {
+    // Min qty 24
+    let qty = Number(qtyEl.value);
+    if (!Number.isFinite(qty)) qty = 24;
+    qty = Math.max(24, Math.floor(qty));
+    qtyEl.value = String(qty);
 
-  el("screens").textContent = screens;
-  el("marginPct").textContent = `${marginPct.toFixed(1)}%`;
-  el("marginDollar").textContent = money(margin);
+    // Colors 1–4
+    let colors = Number(colorsEl.value);
+    if (!Number.isFinite(colors)) colors = 1;
+    colors = Math.max(1, Math.min(4, Math.floor(colors)));
+    colorsEl.value = String(colors);
 
-  el("costs").innerHTML = `
-    <li>Blanks: ${money(blankCost)}</li>
-    <li>Ink: ${money(ink)}</li>
-    <li>Print labor: ${money(labor)}</li>
-    <li>Setup labor: ${money(COSTS.setup)}</li>
-    <li>Screen prep & reclaim: ${money(screenPrep)}</li>
-    <li>Spoilage buffer: ${money(COSTS.spoilage)}</li>
-    <li><strong>Total internal cost: ${money(internal)}</strong></li>
-  `;
-}
+    // Locations: 1 or 2
+    let locations = Number(locationsEl.value);
+    if (!Number.isFinite(locations)) locations = 1;
+    locations = locations === 2 ? 2 : 1;
 
-function toggleClientView() {
-  el("internal").style.display =
-    el("clientView").checked ? "none" : "block";
-}
+    // Blank cost per shirt (editable)
+    let blankUnit = Number(blankCostEl.value);
+    if (!Number.isFinite(blankUnit)) blankUnit = 0;
+    blankUnit = Math.max(0, blankUnit);
+    blankCostEl.value = blankUnit.toFixed(2);
 
-calc();
+    return { qty, colors, locations, blankUnit };
+  }
+
+  function calc() {
+    const { qty, colors, locations, blankUnit } = sanitize();
+
+    const screens = colors * locations;
+
+    // Client pricing
+    const per = clientPricePerShirt(qty);
+    const clientTotal = per * qty;
+
+    // Internal cost math
+    const blanksTotal = blankUnit * qty;
+    const inkTotal = COSTS.inkPerColorPerLocationPerShirt * colors * locations * qty;
+    const printLaborTotal = COSTS.printLaborPerShirt * qty;
+    const setupLabor = COSTS.setupLaborPerJob;
+    const screenPrepTotal = COSTS.screenPrepPerScreenPerJob * screens;
+    const spoilage = COSTS.spoilageBufferPerJob;
+
+    const internalTotal =
+      blanksTotal +
+      inkTotal +
+      printLaborTotal +
+      setupLabor +
+      screenPrepTotal +
+      spoilage;
+
+    const margin = clientTotal - internalTotal;
+    const marginPct = clientTotal > 0 ? (margin / clientTotal) * 100 : 0;
+
+    // Render
+    perShirtEl.textContent = `${money(per)} / SHIRT`;
+    totalEl.textContent = `${money(clientTotal)} TOTAL`;
+
+    screensEl.textContent = String(screens);
+    marginPctEl.textContent = `${marginPct.toFixed(1)}%`;
+    marginDollarEl.textContent = money(margin);
+
+    costsEl.innerHTML = `
+      <li>BLANKS: ${money(blankUnit)} × ${qty} = ${money(blanksTotal)}</li>
+      <li>INK: ${money(inkTotal)}</li>
+      <li>PRINT LABOR: ${money(printLaborTotal)}</li>
+      <li>SETUP LABOR: ${money(setupLabor)}</li>
+      <li>SCREEN PREP & RECLAIM: ${money(screenPrepTotal)}</li>
+      <li>SPOILAGE BUFFER: ${money(spoilage)}</li>
+      <li><strong>TOTAL INTERNAL COST: ${money(internalTotal)}</strong></li>
+    `;
+  }
+
+  // Button triggers calc
+  getQuoteBtn.addEventListener("click", calc);
+
+  // Live update on changes (still keep button for “submit” feel)
+  [qtyEl, blankCostEl, colorsEl, locationsEl].forEach((node) => {
+    node.addEventListener("input", calc);
+    node.addEventListener("change", calc);
+  });
+
+  clientViewEl.addEventListener("change", toggleClientView);
+
+  // First run
+  toggleClientView();
+  calc();
+});
