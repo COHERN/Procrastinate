@@ -19,7 +19,7 @@
 
 <main>
 
-  <!-- CONTROLS (VISUALLY QUIET) -->
+  <!-- CONTROLS -->
   <section class="controlsPanel">
     <h2>EDIT JOB DETAILS</h2>
 
@@ -30,10 +30,10 @@
 
       <label>GARMENT
         <select id="garment">
-          <option>BELLA 3001</option>
-          <option>GILDAN 5000</option>
-          <option>COMFORT COLORS 1717</option>
-          <option>NEXT LEVEL 3600</option>
+          <option value="bella">BELLA 3001</option>
+          <option value="gildan">GILDAN 5000</option>
+          <option value="comfort">COMFORT COLORS 1717</option>
+          <option value="next">NEXT LEVEL 3600</option>
         </select>
       </label>
 
@@ -73,10 +73,14 @@
     </div>
   </section>
 
-  <!-- JOB DETAILS (INTERNAL + TOGGLEABLE) -->
+  <!-- JOB DETAILS -->
   <section id="jobDetails">
     <h2>JOB DETAILS</h2>
+
     <div class="kv">
+      <div>DATE ISSUED:</div><div><input id="dateIssued" type="date"></div>
+      <div>QUOTE VALID THROUGH:</div><div id="validThrough">—</div>
+
       <div>QTY:</div><div id="jdQty">—</div>
       <div>GARMENT:</div><div id="jdGarment">—</div>
       <div>GARMENT COLOR:</div><div id="jdGarmentColor">—</div>
@@ -100,7 +104,10 @@
     </p>
   </section>
 
-  <!-- INTERNAL ONLY -->
+  <!-- INTERNAL DIVIDER -->
+  <hr class="internalDivider">
+
+  <!-- INTERNAL -->
   <section id="internal">
     <h2 class="internal">INTERNAL ONLY</h2>
 
