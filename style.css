@@ -1,9 +1,9 @@
 :root {
-  --bg: #f4f1ec;
+  --bg: #fafafa;
   --text: #111;
   --muted: #666;
   --red: #c1121f;
-  --border: #d0ccc6;
+  --border: #ddd;
 }
 
 * { box-sizing: border-box; }
@@ -13,37 +13,42 @@ body {
   font-family: "Space Mono", monospace;
   background: var(--bg);
   color: var(--text);
+  font-size: 14px;
 
-  /* subtle paper grain */
   background-image:
-    radial-gradient(rgba(0,0,0,0.035) 1px, transparent 1px),
-    radial-gradient(rgba(0,0,0,0.025) 1px, transparent 1px);
-  background-size: 22px 22px, 18px 18px;
-  background-position: 0 0, 7px 9px;
+    radial-gradient(rgba(0,0,0,0.015) 1px, transparent 1px);
+  background-size: 22px 22px;
 }
 
 header {
   text-align: center;
-  padding: 12px 12px 10px;
+  padding: 14px;
   border-bottom: 1px solid var(--border);
 }
 
 h1 {
   margin: 0;
   font-size: 18px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 }
 
 main {
   max-width: 900px;
-  margin: 0 auto;
-  padding: 16px;
+  margin: auto;
+  padding: 20px;
 }
 
 h2 {
-  font-size: 13px;
-  margin: 22px 0 10px;
-  letter-spacing: 0.10em;
+  font-size: 12.5px;
+  letter-spacing: 0.12em;
+  margin: 24px 0 10px;
+}
+
+.controlsPanel {
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 14px;
+  border-radius: 12px;
 }
 
 .grid {
@@ -53,67 +58,58 @@ h2 {
 }
 
 label {
-  font-size: 12px;
+  font-size: 12.5px;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
 input, select {
-  padding: 9px 10px;
+  padding: 10px;
   font-family: inherit;
   border: 1px solid var(--border);
-  background: #fff;
   border-radius: 10px;
 }
 
-.row {
-  margin-top: 12px;
-}
-
-button#getQuote {
-  padding: 10px 12px;
+button {
+  margin-top: 14px;
+  padding: 10px 14px;
   font-family: inherit;
+  border-radius: 10px;
   border: 1px solid var(--border);
   background: #fff;
-  border-radius: 10px;
   cursor: pointer;
-  letter-spacing: 0.06em;
-}
-
-button#getQuote:hover {
-  border-color: var(--red);
 }
 
 .price {
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 #perShirt {
-  font-size: 18px;
-  letter-spacing: 0.02em;
+  font-size: 20px;
 }
 
 #total {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
-  letter-spacing: 0.02em;
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: 200px auto;
+  gap: 8px 16px;
+  font-size: 13px;
 }
 
 .terms p {
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.6;
   color: var(--muted);
-  line-height: 1.55;
-  margin: 8px 0;
 }
 
 .bold {
-  color: var(--text);
   font-weight: 700;
-}
-
-#internal {
-  margin-top: 26px;
+  color: var(--text);
 }
 
 .internal {
@@ -124,35 +120,17 @@ button#getQuote:hover {
 
 .internal-grid {
   display: grid;
-  grid-template-columns: 140px auto;
+  grid-template-columns: 160px auto;
   gap: 10px 16px;
-  font-size: 13px;
-  margin-top: 12px;
-}
-
-details {
-  margin-top: 12px;
-}
-
-summary {
-  cursor: pointer;
-  letter-spacing: 0.08em;
+  font-size: 13.5px;
 }
 
 ul {
-  padding-left: 18px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
-  line-height: 1.55;
 }
 
 .controls {
   margin-top: 22px;
-  font-size: 12px;
-}
-
-.checkbox {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
+  font-size: 12.5px;
 }
