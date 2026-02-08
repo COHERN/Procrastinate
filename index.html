@@ -1,149 +1,111 @@
-<!-- index.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <title>Procrastinator Prints</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Procrastinator Prints — Quote Calculator (Internal)</title>
 
-  <!-- Mono typeface (Space Mono) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Mono font -->
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <h1>PROCRASTINATOR PRINTS!</h1>
-      <p class="sub">Static Quote Calculator — Internal v1</p>
-    </div>
 
-    <label class="toggle">
-      <input id="toggleInternal" type="checkbox" checked />
-      <span>Show internal costs</span>
-    </label>
+  <header>
+    <h1>PROCRASTINATOR PRINTS!</h1>
   </header>
 
-  <main class="layout">
-    <section class="card">
-      <h2>Inputs</h2>
+  <main>
+
+    <section>
+      <h2>JOB DETAILS</h2>
 
       <div class="grid">
         <label>
-          Quantity <span class="hint">(min 12)</span>
-          <input id="qty" type="number" min="1" step="1" value="12" />
+          QTY
+          <input id="qty" type="number" min="24" value="24" />
         </label>
 
         <label>
-          Bundle
-          <select id="bundle">
-            <option value="simple">Simple (1 color, 1 location)</option>
-            <option value="standard">Standard (2 colors OR front+back)</option>
-            <option value="complex">Complex (3+ colors OR multi-location)</option>
+          GARMENT
+          <select id="garment">
+            <option value="bella">Bella 3001</option>
+            <option value="gildan">Gildan 5000</option>
+            <option value="cc">Comfort Colors 1717</option>
+            <option value="next">Next Level 3600</option>
           </select>
         </label>
-      </div>
 
-      <div class="divider"></div>
-
-      <div class="row">
-        <label class="checkbox">
-          <input id="autoFromBundle" type="checkbox" checked />
-          Auto-fill colors/locations from bundle
-        </label>
-      </div>
-
-      <div class="grid">
         <label>
-          Colors <span class="hint">(internal)</span>
-          <input id="colors" type="number" min="1" step="1" value="1" />
+          GARMENT COLOR
+          <input id="garmentColor" type="text" value="Natural" />
         </label>
 
         <label>
-          Locations <span class="hint">(internal)</span>
+          PRINT COLORS
+          <input id="inkColors" type="text" value="Black" />
+        </label>
+
+        <label>
+          COLORS (1–4)
+          <input id="colors" type="number" min="1" max="4" value="1" />
+        </label>
+
+        <label>
+          PRINT LOCATION
           <select id="locations">
-            <option value="1">1 (front only)</option>
-            <option value="2">2 (front + back)</option>
+            <option value="1">Front</option>
+            <option value="2">Front + Back</option>
           </select>
         </label>
       </div>
-
-      <div class="row small">
-        <p class="hint">
-          Screens (internal) = colors × locations. Ink cost is per color per location per shirt.
-        </p>
-      </div>
-
-      <div class="row actions">
-        <button id="resetBtn" type="button" class="secondary">Reset</button>
-      </div>
-
-      <div id="warning" class="warning" hidden></div>
     </section>
 
-    <section class="card">
-      <h2>Quote</h2>
-
-      <div class="results">
-        <div class="result-line">
-          <span class="label">Client price / shirt</span>
-          <span id="clientPerShirt" class="value">$—</span>
-        </div>
-
-        <div class="result-line">
-          <span class="label">Client quote total</span>
-          <span id="clientTotal" class="value big">$—</span>
-        </div>
-
-        <div class="divider"></div>
-
-        <details id="internalPanel" open>
-          <summary>Internal breakdown</summary>
-
-          <div class="result-line">
-            <span class="label">Screens</span>
-            <span id="screens" class="value">—</span>
-          </div>
-
-          <div class="result-line">
-            <span class="label">Internal cost (total)</span>
-            <span id="internalTotal" class="value">$—</span>
-          </div>
-
-          <div class="result-line">
-            <span class="label">Internal cost / shirt</span>
-            <span id="internalPerShirt" class="value">$—</span>
-          </div>
-
-          <div class="result-line">
-            <span class="label">Margin ($)</span>
-            <span id="marginDollars" class="value">$—</span>
-          </div>
-
-          <div class="result-line">
-            <span class="label">Margin (%)</span>
-            <span id="marginPercent" class="value">—</span>
-          </div>
-
-          <div class="divider"></div>
-
-          <h3 class="h3">Cost lines</h3>
-          <ul id="costLines" class="lines"></ul>
-        </details>
+    <section>
+      <h2>PRICE</h2>
+      <div class="price">
+        <div id="perShirt">$— / SHIRT</div>
+        <div id="total">$— TOTAL</div>
       </div>
     </section>
+
+    <section class="terms">
+      <h2>TERMS & PRICING NOTES</h2>
+      <p>
+        Pricing is based on the print details listed above.<br>
+        Screen printing has a minimum of 24 pieces and a maximum of four colors per print location.<br>
+        Any changes to print colors or locations will require an updated quote.
+      </p>
+      <p class="bold">
+        A 50% non-refundable deposit is required to begin production.<br>
+        The remaining balance is due at delivery.
+      </p>
+    </section>
+
+    <section id="internal">
+      <h2 class="internal">INTERNAL ONLY</h2>
+
+      <div class="internal-grid">
+        <div>SCREENS:</div><div id="screens">—</div>
+        <div>MARGIN:</div><div id="marginPct">—</div>
+        <div>MARGIN ($):</div><div id="marginDollar">—</div>
+      </div>
+
+      <details>
+        <summary>COST BREAKDOWN</summary>
+        <ul id="costs"></ul>
+      </details>
+    </section>
+
+    <div class="controls">
+      <label>
+        <input id="clientView" type="checkbox" />
+        CLIENT / PRINT VIEW
+      </label>
+    </div>
+
   </main>
-
-  <footer class="footer">
-    <p class="hint">
-      Bella 3001 bundled pricing. No backend. Host on GitHub Pages.
-    </p>
-  </footer>
 
   <script src="quote.js"></script>
 </body>
-
 </html>
-
