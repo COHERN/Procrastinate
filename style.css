@@ -1,111 +1,115 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Procrastinator Prints</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+:root {
+  --bg: #f4f1ec;
+  --text: #111;
+  --muted: #666;
+  --red: #c1121f;
+  --border: #d0ccc6;
+}
 
-  <!-- Mono font -->
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
+* { box-sizing: border-box; }
 
-  <header>
-    <h1>PROCRASTINATOR PRINTS!</h1>
-  </header>
+body {
+  margin: 0;
+  font-family: "Space Mono", monospace;
+  background: var(--bg);
+  color: var(--text);
+}
 
-  <main>
+header {
+  text-align: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
 
-    <section>
-      <h2>JOB DETAILS</h2>
+h1 {
+  margin: 0;
+  font-size: 18px;
+}
 
-      <div class="grid">
-        <label>
-          QTY
-          <input id="qty" type="number" min="24" value="24" />
-        </label>
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+}
 
-        <label>
-          GARMENT
-          <select id="garment">
-            <option value="bella">Bella 3001</option>
-            <option value="gildan">Gildan 5000</option>
-            <option value="cc">Comfort Colors 1717</option>
-            <option value="next">Next Level 3600</option>
-          </select>
-        </label>
+h2 {
+  font-size: 13px;
+  margin-top: 24px;
+  letter-spacing: 0.08em;
+}
 
-        <label>
-          GARMENT COLOR
-          <input id="garmentColor" type="text" value="Natural" />
-        </label>
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
 
-        <label>
-          PRINT COLORS
-          <input id="inkColors" type="text" value="Black" />
-        </label>
+label {
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
-        <label>
-          COLORS (1–4)
-          <input id="colors" type="number" min="1" max="4" value="1" />
-        </label>
+input, select {
+  padding: 8px;
+  font-family: inherit;
+  border: 1px solid var(--border);
+  background: #fff;
+}
 
-        <label>
-          PRINT LOCATION
-          <select id="locations">
-            <option value="1">Front</option>
-            <option value="2">Front + Back</option>
-          </select>
-        </label>
-      </div>
-    </section>
+.price {
+  margin-top: 8px;
+}
 
-    <section>
-      <h2>PRICE</h2>
-      <div class="price">
-        <div id="perShirt">$— / SHIRT</div>
-        <div id="total">$— TOTAL</div>
-      </div>
-    </section>
+#perShirt {
+  font-size: 18px;
+}
 
-    <section class="terms">
-      <h2>TERMS & PRICING NOTES</h2>
-      <p>
-        Pricing is based on the print details listed above.<br>
-        Screen printing has a minimum of 24 pieces and a maximum of four colors per print location.<br>
-        Any changes to print colors or locations will require an updated quote.
-      </p>
-      <p class="bold">
-        A 50% non-refundable deposit is required to begin production.<br>
-        The remaining balance is due at delivery.
-      </p>
-    </section>
+#total {
+  font-size: 26px;
+  font-weight: bold;
+}
 
-    <section id="internal">
-      <h2 class="internal">INTERNAL ONLY</h2>
+.terms p {
+  font-size: 12px;
+  color: var(--muted);
+}
 
-      <div class="internal-grid">
-        <div>SCREENS:</div><div id="screens">—</div>
-        <div>MARGIN:</div><div id="marginPct">—</div>
-        <div>MARGIN ($):</div><div id="marginDollar">—</div>
-      </div>
+.bold {
+  color: var(--text);
+  font-weight: bold;
+}
 
-      <details>
-        <summary>COST BREAKDOWN</summary>
-        <ul id="costs"></ul>
-      </details>
-    </section>
+#internal {
+  margin-top: 32px;
+}
 
-    <div class="controls">
-      <label>
-        <input id="clientView" type="checkbox" />
-        CLIENT / PRINT VIEW
-      </label>
-    </div>
+.internal {
+  color: var(--red);
+  border-bottom: 1px solid var(--red);
+  padding-bottom: 4px;
+}
 
-  </main>
+.internal-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 8px 16px;
+  font-size: 13px;
+  margin-top: 12px;
+}
 
-  <script src="quote.js"></script>
-</body>
-</html>
+details {
+  margin-top: 12px;
+}
+
+ul {
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.controls {
+  margin-top: 24px;
+  font-size: 12px;
+}
