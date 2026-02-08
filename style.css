@@ -96,7 +96,7 @@ button {
 
 .kv {
   display: grid;
-  grid-template-columns: 200px auto;
+  grid-template-columns: 220px auto;
   gap: 8px 16px;
   font-size: 13px;
 }
@@ -110,6 +110,25 @@ button {
 .bold {
   font-weight: 700;
   color: var(--text);
+}
+
+.internalDivider {
+  margin: 32px 0 18px;
+  border: none;
+  border-top: 1px solid var(--border);
+  position: relative;
+}
+
+.internalDivider::after {
+  content: "INTERNAL";
+  position: absolute;
+  top: -9px;
+  left: 0;
+  padding-right: 10px;
+  background: var(--bg);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--red);
 }
 
 .internal {
