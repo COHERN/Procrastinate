@@ -13,17 +13,25 @@ body {
   font-family: "Space Mono", monospace;
   background: var(--bg);
   color: var(--text);
+
+  /* subtle paper grain */
+  background-image:
+    radial-gradient(rgba(0,0,0,0.035) 1px, transparent 1px),
+    radial-gradient(rgba(0,0,0,0.025) 1px, transparent 1px);
+  background-size: 22px 22px, 18px 18px;
+  background-position: 0 0, 7px 9px;
 }
 
 header {
   text-align: center;
-  padding: 12px;
+  padding: 12px 12px 10px;
   border-bottom: 1px solid var(--border);
 }
 
 h1 {
   margin: 0;
   font-size: 18px;
+  letter-spacing: 0.08em;
 }
 
 main {
@@ -34,13 +42,13 @@ main {
 
 h2 {
   font-size: 13px;
-  margin-top: 24px;
-  letter-spacing: 0.08em;
+  margin: 22px 0 10px;
+  letter-spacing: 0.10em;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 12px;
 }
 
@@ -48,14 +56,33 @@ label {
   font-size: 12px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 input, select {
-  padding: 8px;
+  padding: 9px 10px;
   font-family: inherit;
   border: 1px solid var(--border);
   background: #fff;
+  border-radius: 10px;
+}
+
+.row {
+  margin-top: 12px;
+}
+
+button#getQuote {
+  padding: 10px 12px;
+  font-family: inherit;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+}
+
+button#getQuote:hover {
+  border-color: var(--red);
 }
 
 .price {
@@ -64,37 +91,41 @@ input, select {
 
 #perShirt {
   font-size: 18px;
+  letter-spacing: 0.02em;
 }
 
 #total {
-  font-size: 26px;
-  font-weight: bold;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .terms p {
   font-size: 12px;
   color: var(--muted);
+  line-height: 1.55;
+  margin: 8px 0;
 }
 
 .bold {
   color: var(--text);
-  font-weight: bold;
+  font-weight: 700;
 }
 
 #internal {
-  margin-top: 32px;
+  margin-top: 26px;
 }
 
 .internal {
   color: var(--red);
-  border-bottom: 1px solid var(--red);
-  padding-bottom: 4px;
+  border-bottom: 2px solid var(--red);
+  padding-bottom: 6px;
 }
 
 .internal-grid {
   display: grid;
-  grid-template-columns: auto auto;
-  gap: 8px 16px;
+  grid-template-columns: 140px auto;
+  gap: 10px 16px;
   font-size: 13px;
   margin-top: 12px;
 }
@@ -103,13 +134,25 @@ details {
   margin-top: 12px;
 }
 
+summary {
+  cursor: pointer;
+  letter-spacing: 0.08em;
+}
+
 ul {
   padding-left: 18px;
   font-size: 12px;
   color: var(--muted);
+  line-height: 1.55;
 }
 
 .controls {
-  margin-top: 24px;
+  margin-top: 22px;
   font-size: 12px;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
