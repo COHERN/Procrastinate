@@ -1,3 +1,4 @@
+// LOCKED SHOP ECONOMICS
 const COSTS = {
   ink: 0.02,
   labor: 0.67,
@@ -6,6 +7,7 @@ const COSTS = {
   spoilage: 10
 };
 
+// Client pricing (Bella baseline)
 function pricePerShirt(qty) {
   if (qty >= 100) return 11;
   if (qty >= 50) return 13;
@@ -16,15 +18,27 @@ const $ = id => document.getElementById(id);
 const money = n => `$${n.toFixed(2)}`;
 
 function calc() {
-  let qty = Math.max(24, +$("qty").value || 24);
-  let colors = Math.min(4, Math.max(1, +$("colors").value || 1));
-  let locations = +$("locations").value;
-  let blank = +$("blankCost").value || 0;
+  const qty = Math.max(24, +$("qty").value || 24);
+  const colors = Math.min(4, Math.max(1, +$("colors").value || 1));
+  const locations = +$("locations").value;
+  const blank = +$("blankCost").value || 0;
 
-  let per = pricePerShirt(qty);
-  let total = per * qty;
+  // Dates
+  const dateInput = $("dateIssued");
+  if (!dateInput.value) {
+    dateInput.valueAsDate = new Date();
+  }
 
-  let internal =
+  const issued = new Date(dateInput.value);
+  const valid = new Date(issued);
+  valid.setDate(valid.getDate() + 14);
+  $("validThrough").textContent = valid.toLocaleDateString();
+
+  // Pricing
+  const per = pricePerShirt(qty);
+  const total = per * qty;
+
+  const internal =
     blank * qty +
     COSTS.ink * colors * locations * qty +
     COSTS.labor * qty +
@@ -32,14 +46,15 @@ function calc() {
     COSTS.screenPrep * colors * locations +
     COSTS.spoilage;
 
-  let profit = total - internal;
-  let margin = (profit / total) * 100;
+  const profit = total - internal;
+  const margin = (profit / total) * 100;
 
+  // Render
   $("perShirt").textContent = `${money(per)} / SHIRT`;
   $("total").textContent = `${money(total)} TOTAL`;
 
   $("jdQty").textContent = qty;
-  $("jdGarment").textContent = $("garment").value;
+  $("jdGarment").textContent = $("garment").selectedOptions[0].text;
   $("jdGarmentColor").textContent = $("garmentColor").value;
   $("jdInkColors").textContent = $("inkColors").value;
   $("jdColors").textContent = colors;
@@ -59,14 +74,17 @@ function calc() {
   `;
 }
 
-$("getQuote").onclick = calc;
+// Toggle hides everything INTERNAL
 $("clientView").onchange = e => {
-  $("jobDetails").style.display = e.target.checked ? "none" : "block";
-  $("internal").style.display = e.target.checked ? "none" : "block";
+  const hide = e.target.checked;
+  $("jobDetails").style.display = hide ? "none" : "block";
+  $("internal").style.display = hide ? "none" : "block";
+  document.querySelector(".internalDivider").style.display = hide ? "none" : "block";
 };
 
-document.querySelectorAll("input, select").forEach(el => {
-  el.addEventListener("change", calc);
-});
+$("getQuote").onclick = calc;
+document.querySelectorAll("input, select").forEach(el =>
+  el.addEventListener("change", calc)
+);
 
 calc();
