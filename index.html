@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -19,8 +20,8 @@
 
 <main>
 
-  <!-- CONTROLS -->
-  <section class="controlsPanel">
+  <!-- EDIT CONTROLS (WORKING MODE ONLY) -->
+  <section id="controlsPanel" class="controlsPanel">
     <h2>EDIT JOB DETAILS</h2>
 
     <div class="grid">
@@ -37,8 +38,8 @@
         </select>
       </label>
 
-      <label>BLANK COST / SHIRT
-        <input id="blankCost" type="number" step="0.01" value="4.01">
+      <label>BLANK COST / SHIRT (INTERNAL)
+        <input id="blankCost" type="number" min="0" step="0.01" value="4.01">
       </label>
 
       <label>GARMENT COLOR
@@ -59,12 +60,16 @@
           <option value="2">FRONT + BACK</option>
         </select>
       </label>
+
+      <label>DATE ISSUED
+        <input id="dateIssued" type="date">
+      </label>
     </div>
 
-    <button id="getQuote">GET QUOTE</button>
+    <button id="getQuote" type="button">GET QUOTE</button>
   </section>
 
-  <!-- PRICE -->
+  <!-- PRICE (ALWAYS VISIBLE) -->
   <section>
     <h2>PRICE</h2>
     <div class="price">
@@ -73,12 +78,12 @@
     </div>
   </section>
 
-  <!-- JOB DETAILS -->
+  <!-- JOB DETAILS (ALWAYS VISIBLE) -->
   <section id="jobDetails">
     <h2>JOB DETAILS</h2>
 
     <div class="kv">
-      <div>DATE ISSUED:</div><div><input id="dateIssued" type="date"></div>
+      <div>DATE ISSUED:</div><div id="jdIssued">—</div>
       <div>QUOTE VALID THROUGH:</div><div id="validThrough">—</div>
 
       <div>QTY:</div><div id="jdQty">—</div>
@@ -90,7 +95,7 @@
     </div>
   </section>
 
-  <!-- TERMS -->
+  <!-- TERMS (ALWAYS VISIBLE) -->
   <section class="terms">
     <h2>TERMS & PRICING NOTES</h2>
     <p>
@@ -104,10 +109,8 @@
     </p>
   </section>
 
-  <!-- INTERNAL DIVIDER -->
-  <hr class="internalDivider">
-
-  <!-- INTERNAL -->
+  <!-- INTERNAL (WORKING MODE ONLY; HIDDEN WHEN PRINTING) -->
+  <hr id="internalDivider" class="internalDivider">
   <section id="internal">
     <h2 class="internal">INTERNAL ONLY</h2>
 
@@ -122,11 +125,10 @@
     </details>
   </section>
 
-  <div class="controls">
-    <label>
-      <input id="clientView" type="checkbox">
-      CLIENT / PRINT VIEW
-    </label>
+  <!-- ONE BUTTON: PRINT -->
+  <div class="printBar">
+    <button id="printBtn" type="button">PRINT</button>
+    <div class="printHint">Print hides internal costs. Screenshot or print from the clean view.</div>
   </div>
 
 </main>
