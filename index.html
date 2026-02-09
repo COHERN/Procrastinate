@@ -49,9 +49,17 @@
         <input id="inkColors" type="text" value="BLACK">
       </label>
 
-     <label>COLORS (1–4)
-        <input id="colors" type="number" min="1" max="4" step="1" value="1">
-      </label>
+    <label>COLORS (1–4)
+  <input
+    id="colors"
+    type="number"
+    min="1"
+    max="4"
+    step="1"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    value="1">
+</label>
 
       <label>PRINT LOCATION
         <select id="printLocation">
