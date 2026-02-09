@@ -21,7 +21,7 @@
 
   <!-- WORKING CONTROLS (hidden during PRINT) -->
   <section id="controlsPanel" class="controlsPanel">
-    <h2>EDIT JOB DETAILS</h2>
+    <h2>INPUT JOB DETAILS</h2>
 
     <div class="grid">
       <label>QTY (MIN 24)
@@ -37,7 +37,7 @@
         </select>
       </label>
 
-      <label>BLANK COST / SHIRT (INTERNAL)
+      <label>BLANK COST
         <input id="blankCost" type="number" min="0" step="0.01" value="4.01">
       </label>
 
@@ -49,7 +49,9 @@
         <input id="inkColors" type="text" value="BLACK">
       </label>
 
-     <input id="colors" type="number" min="1" max="4" step="1" value="1">
+     <label>COLORS (1–4)
+        <input id="colors" type="number" min="1" max="4" step="1" value="1">
+      </label>
 
       <label>PRINT LOCATION
         <select id="printLocation">
