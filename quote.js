@@ -44,7 +44,8 @@ function calc() {
   if (!dateInput.value) {
     dateInput.valueAsDate = new Date();
   }
-  const issued = new Date(dateInput.value);
+  const [year, month, day] = dateInput.value.split("-").map(Number);
+const issued = new Date(year, month - 1, day);
   const valid = new Date(issued);
   valid.setDate(valid.getDate() + 14);
 
