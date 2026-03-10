@@ -1,4 +1,4 @@
-// Procrastinator Prints — Quote Calculator v3
+// Procrastinator Prints — Quote Calculator v4
 // Working view shows internals.
 // PRINT hides internals + controls so you can screenshot or print cleanly.
 
@@ -13,13 +13,13 @@ spoilage:   10.00   // flat per job
 
 // ── Pricing rules ──────────────────────────────────────────────────────────
 const PRICING = {
-minQty:          12,
-maxQty:          72,
-maxColors:        4,
-targetMargin:  0.45,   // 45% — price auto-calculated from cost + this margin
-ceilPerShirt:  25.00,  // never quote above this per shirt
-extraColor:     2.00,  // per shirt per extra color beyond 1
-extraLocation:  1.50,  // per shirt per extra location beyond 1
+minQty:         12,
+maxQty:         72,
+maxColors:       4,
+targetMargin: 0.45,   // 45% — price auto-calculated from cost + this margin
+ceilPerShirt: 25.00,  // never quote above this per shirt
+extraColor:    2.00,  // per shirt per extra color beyond 1
+extraLocation: 1.50,  // per shirt per extra location beyond 1
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -37,18 +37,31 @@ const locs = Number(opt?.dataset?.locs);
 return Number.isFinite(locs) && locs > 0 ? locs : 1;
 }
 
+// ── Internal cost calculation ──────────────────────────────────────────────
+function calcInternal(qty, blank, colors, locationCount) {
+const screens = colors * locationCount;
+return (
+(blank * qty) +
+(COSTS.ink * colors * locationCount * qty) +
+(COSTS.labor * qty) +
+COSTS.setup +
+(COSTS.screenPrep * screens) +
+COSTS.spoilage
+);
+}
+
 // ── Next tier upsell suggestion ────────────────────────────────────────────
 function upsellMessage(qty, per, blank, colors, locationCount) {
 const tiers = [12, 24, 36, 48, 72];
 const nextQty = tiers.find(t => t > qty);
 if (!nextQty || nextQty > PRICING.maxQty) return “”;
 
-// Calculate next tier price
-const nextInternal = calcInternal(nextQty, blank, colors, locationCount);
+const nextInternal     = calcInternal(nextQty, blank, colors, locationCount);
 const nextCostPerShirt = nextInternal / nextQty;
-const nextBase = nextCostPerShirt / (1 - PRICING.targetMargin);
-const extraColors    = Math.max(0, colors - 1);
-const extraLocations = Math.max(0, locationCount - 1);
+const nextBase         = nextCostPerShirt / (1 - PRICING.targetMargin);
+const extraColors      = Math.max(0, colors - 1);
+const extraLocations   = Math.max(0, locationCount - 1);
+
 const nextPer = Math.min(
 PRICING.ceilPerShirt,
 nextBase +
@@ -56,25 +69,12 @@ nextBase +
 (extraLocations * PRICING.extraLocation)
 );
 
-const saving = (per - nextPer).toFixed(2);
+const saving = Number((per - nextPer).toFixed(2)); // FIX: cast to Number for correct comparison
 if (saving <= 0) return “”;
 
 const extraShirts = nextQty - qty;
-const extraCost   = (nextPer * nextQty - per * qty).toFixed(2);
-return `Add ${extraShirts} more shirts (${nextQty} total) and save $${saving}/shirt — only $${extraCost} more.`;
-}
-
-// ── Internal cost calculation ──────────────────────────────────────────────
-function calcInternal(qty, blank, colors, locationCount) {
-const screens = colors * locationCount;
-return (
-(blank             * qty) +
-(COSTS.ink * colors * locationCount * qty) +
-(COSTS.labor       * qty) +
-COSTS.setup +
-(COSTS.screenPrep  * screens) +
-COSTS.spoilage
-);
+const extraCost   = ((nextPer * nextQty) - (per * qty)).toFixed(2);
+return `Add ${extraShirts} more shirts (${nextQty} total) and save $${saving.toFixed(2)}/shirt — only $${extraCost} more.`;
 }
 
 // ── Main calc ──────────────────────────────────────────────────────────────
@@ -82,18 +82,15 @@ function calc() {
 
 // Quantity — clamp to min/max
 let qty = Number($(“qty”).value);
-if (!Number.isFinite(qty) || qty < PRICING.minQty) qty = PRICING.minQty;
-qty = Math.min(PRICING.maxQty, Math.floor(qty));
+if (!Number.isFinite(qty)) qty = PRICING.minQty;
+qty = Math.min(PRICING.maxQty, Math.max(PRICING.minQty, Math.floor(qty)));
 $(“qty”).value = String(qty);
 
-// Qty warning
+// Qty warning — only fires if user typed out of range before clamp
 const qtyWarning = $(“qtyWarning”);
 if (qtyWarning) {
 const raw = Number($(“qty”).value);
-if (raw < PRICING.minQty) {
-qtyWarning.textContent = `Minimum order is ${PRICING.minQty} shirts.`;
-qtyWarning.style.display = “block”;
-} else if (raw > PRICING.maxQty) {
+if (raw >= PRICING.maxQty) {
 qtyWarning.textContent = `Maximum order is ${PRICING.maxQty} shirts. Contact us for larger orders.`;
 qtyWarning.style.display = “block”;
 } else {
@@ -121,13 +118,13 @@ const issued = new Date(year, month - 1, day);
 const valid  = new Date(issued);
 valid.setDate(valid.getDate() + 14);
 
-$(“jdIssued”).textContent    = formatNiceDate(issued);
+$(“jdIssued”).textContent     = formatNiceDate(issued);
 $(“validThrough”).textContent = formatNiceDate(valid);
 
 // ── Pricing ──
-const internal       = calcInternal(qty, blank, colors, locationCount);
-const costPerShirt   = internal / qty;
-const marginBase     = costPerShirt / (1 - PRICING.targetMargin); // 45% margin floor
+const internal     = calcInternal(qty, blank, colors, locationCount);
+const costPerShirt = internal / qty;
+const marginBase   = costPerShirt / (1 - PRICING.targetMargin);
 
 const extraColors    = Math.max(0, colors - 1);
 const extraLocations = Math.max(0, locationCount - 1);
@@ -139,8 +136,8 @@ marginBase +
 (extraLocations * PRICING.extraLocation)
 );
 
-const total   = per * qty;
-const profit  = total - internal;
+const total     = per * qty;
+const profit    = total - internal;
 const marginPct = total > 0 ? (profit / total) * 100 : 0;
 
 // ── Render price ──
@@ -158,14 +155,14 @@ $(“jdColors”).textContent       = String(colors);
 $(“jdLocation”).textContent     = $(“printLocation”).selectedOptions[0].text;
 
 // ── Notes — only show if filled in ──
-const notesVal = $(“notes”).value.trim();
+const notesVal     = $(“notes”).value.trim();
 const notesDisplay = $(“notesDisplay”);
 if (notesDisplay) {
 if (notesVal) {
-$(“jdNotes”).textContent    = notesVal;
-notesDisplay.style.display  = “block”;
+$(“jdNotes”).textContent   = notesVal;
+notesDisplay.style.display = “block”;
 } else {
-notesDisplay.style.display  = “none”;
+notesDisplay.style.display = “none”;
 }
 }
 
@@ -179,8 +176,8 @@ $(“costs”).innerHTML = `<li>BLANKS: ${money(blank * qty)}</li> <li>INK: ${mo
 const upsellEl = $(“upsell”);
 if (upsellEl) {
 const msg = upsellMessage(qty, per, blank, colors, locationCount);
-upsellEl.textContent    = msg;
-upsellEl.style.display  = msg ? “block” : “none”;
+upsellEl.textContent   = msg;
+upsellEl.style.display = msg ? “block” : “none”;
 }
 
 // ── Update terms min/max dynamically ──
@@ -202,10 +199,17 @@ document.body.classList.remove(“printing”);
 
 // ── Init ───────────────────────────────────────────────────────────────────
 document.addEventListener(“DOMContentLoaded”, () => {
-document.querySelectorAll(“input, select”).forEach(el => {
+
+// FIX: include textarea in live update listeners
+document.querySelectorAll(“input, select, textarea”).forEach(el => {
 el.addEventListener(“change”, calc);
 el.addEventListener(“input”,  calc);
 });
+
 $(“printBtn”).addEventListener(“click”, doPrint);
+
+// FIX: wire up the Update Quote button
+$(“calcBtn”).addEventListener(“click”, calc);
+
 calc();
 });
