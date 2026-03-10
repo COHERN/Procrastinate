@@ -148,12 +148,26 @@ $(“perShirt”).textContent = `${money(per)} / SHIRT`;
 $(“total”).textContent    = `${money(total)} TOTAL`;
 
 // ── Render job details (client-safe) ──
+$(“jdClientName”).textContent   = $(“clientName”).value.trim() || “—”;
+$(“jdJobName”).textContent      = $(“jobName”).value.trim() || “—”;
 $(“jdQty”).textContent          = String(qty);
 $(“jdGarment”).textContent      = $(“garment”).selectedOptions[0].text;
 $(“jdGarmentColor”).textContent = $(“garmentColor”).value.trim() || “—”;
 $(“jdInkColors”).textContent    = $(“inkColors”).value.trim() || “—”;
 $(“jdColors”).textContent       = String(colors);
 $(“jdLocation”).textContent     = $(“printLocation”).selectedOptions[0].text;
+
+// ── Notes — only show if filled in ──
+const notesVal = $(“notes”).value.trim();
+const notesDisplay = $(“notesDisplay”);
+if (notesDisplay) {
+if (notesVal) {
+$(“jdNotes”).textContent    = notesVal;
+notesDisplay.style.display  = “block”;
+} else {
+notesDisplay.style.display  = “none”;
+}
+}
 
 // ── Render internal ──
 $(“profit”).textContent    = money(profit);
