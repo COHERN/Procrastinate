@@ -320,19 +320,19 @@
     <div class="section-body">
       <div class="grid">
         <label>BIG CARTEL / PLATFORM ($/mo)
-          <input id="ohPlatform" type="number" min="0" step="0.01" value="9.99">
+          <input id="ohPlatform" type="number" min="0" step="0.01" value="15.00">
         </label>
-        <label>DOMAIN ($/mo)
-          <input id="ohDomain" type="number" min="0" step="0.01" value="1.50">
+        <label>EMAIL + DOMAIN ($/mo)
+          <input id="ohDomain" type="number" min="0" step="0.01" value="12.00">
         </label>
         <label>PACKAGING MATERIALS ($/mo)
-          <input id="ohPackaging" type="number" min="0" step="0.01" value="15.00">
+          <input id="ohPackaging" type="number" min="0" step="0.01" value="27.00">
         </label>
         <label>OTHER MONTHLY COSTS
           <input id="ohOther" type="number" min="0" step="0.01" value="0">
         </label>
         <label>EST. SHIRTS SOLD / MONTH
-          <input id="ohUnits" type="number" min="1" value="20">
+          <input id="ohUnits" type="number" min="1" value="24">
         </label>
         <label>BUFFER %
           <select id="ohBuffer">
@@ -376,6 +376,40 @@
         <div class="threshold-fill" id="thresholdFill" style="width:0%"></div>
       </div>
       <div class="threshold-note" id="thresholdNote">Add designs to reach the $200 free shipping threshold.</div>
+    </div>
+  </div>
+
+  <!-- 4. GRAND TOTAL -->
+  <div class="section" id="sectionGrandTotal">
+    <div class="section-header" data-target="sectionGrandTotal">
+      <span class="section-title">GRAND TOTAL</span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div id="perDesignTotals" style="margin-bottom:16px;"></div>
+      <div style="border-top:2px solid var(--border); padding-top:14px;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:0.14em; margin-bottom:10px;">ALL DESIGNS COMBINED</div>
+        <div class="retail-options">
+          <div class="retail-option">
+            <div class="pct">50% MARGIN</div>
+            <div class="price" id="gt50">—</div>
+            <div class="prof" id="gt50cost">—</div>
+            <div class="prof" id="gt50profit" style="color:var(--green); font-weight:700;"></div>
+          </div>
+          <div class="retail-option recommended">
+            <div class="pct">55% MARGIN ★</div>
+            <div class="price" id="gt55" style="color:var(--green);">—</div>
+            <div class="prof" id="gt55cost">—</div>
+            <div class="prof" id="gt55profit" style="color:var(--green); font-weight:700;"></div>
+          </div>
+          <div class="retail-option">
+            <div class="pct">60% MARGIN</div>
+            <div class="price" id="gt60">—</div>
+            <div class="prof" id="gt60cost">—</div>
+            <div class="prof" id="gt60profit" style="color:var(--green); font-weight:700;"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -491,6 +525,9 @@ function calc() {
     `Monthly overhead: ${money(oh.monthly)} ÷ ${$("ohUnits").value} shirts = ${money(oh.perShirt)}/shirt + ${Math.round(oh.buffer*100)}% buffer`;
 
   let totalBlanks = 0, totalShirts = 0, totalDesigns = 0;
+  let grandTrueCost = 0;
+  let grand50rev = 0, grand55rev = 0, grand60rev = 0;
+  const perDesignRows = [];
 
   designs.forEach(d => {
     const data = readCard(d.id);
@@ -501,14 +538,27 @@ function calc() {
     const artPerShirt  = data.art / data.qty;
     const baseCost     = (blankTotal + printCost) / data.qty + artPerShirt + oh.perShirt;
     const trueCost     = baseCost * (1 + oh.buffer);
+    const totalCost    = trueCost * data.qty;
 
     const r50 = trueCost / 0.50;
     const r55 = trueCost / 0.45;
     const r60 = trueCost / 0.40;
 
-    totalBlanks  += blankTotal;
-    totalShirts  += data.qty;
-    totalDesigns += 1;
+    const rev50 = r50 * data.qty;
+    const rev55 = r55 * data.qty;
+    const rev60 = r60 * data.qty;
+
+    totalBlanks    += blankTotal;
+    totalShirts    += data.qty;
+    totalDesigns   += 1;
+    grandTrueCost  += totalCost;
+    grand50rev     += rev50;
+    grand55rev     += rev55;
+    grand60rev     += rev60;
+
+    // Per-design row for grand total section
+    const name = document.querySelector(`#design-${d.id} .d-name`)?.value.trim() || `DESIGN #${d.id}`;
+    perDesignRows.push({ name, qty: data.qty, totalCost, rev50, rev55, rev60 });
 
     const el = $(`results-${d.id}`);
     if (el) {
@@ -523,22 +573,75 @@ function calc() {
           <div class="retail-option">
             <div class="pct">50% MARGIN</div>
             <div class="price">${money(r50)}</div>
-            <div class="prof">+${money((r50-trueCost)*data.qty)} profit</div>
+            <div class="prof">cost ${money(totalCost)}</div>
+            <div class="prof">rev ${money(rev50)}</div>
+            <div class="prof" style="color:var(--green);font-weight:700;">+${money(rev50-totalCost)} profit</div>
           </div>
           <div class="retail-option recommended">
             <div class="pct">55% MARGIN ★</div>
             <div class="price">${money(r55)}</div>
-            <div class="prof">+${money((r55-trueCost)*data.qty)} profit</div>
+            <div class="prof">cost ${money(totalCost)}</div>
+            <div class="prof">rev ${money(rev55)}</div>
+            <div class="prof" style="color:var(--green);font-weight:700;">+${money(rev55-totalCost)} profit</div>
           </div>
           <div class="retail-option">
             <div class="pct">60% MARGIN</div>
             <div class="price">${money(r60)}</div>
-            <div class="prof">+${money((r60-trueCost)*data.qty)} profit</div>
+            <div class="prof">cost ${money(totalCost)}</div>
+            <div class="prof">rev ${money(rev60)}</div>
+            <div class="prof" style="color:var(--green);font-weight:700;">+${money(rev60-totalCost)} profit</div>
           </div>
         </div>
       `;
     }
   });
+
+  // ── Per-design totals in grand total section ──
+  const pdt = $("perDesignTotals");
+  if (pdt) {
+    if (perDesignRows.length === 0) {
+      pdt.innerHTML = `<div style="font-size:12px;color:var(--muted);">Add designs above to see totals.</div>`;
+    } else {
+      pdt.innerHTML = perDesignRows.map(r => `
+        <div style="margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;margin-bottom:6px;">${r.name} — ${r.qty} SHIRTS</div>
+          <div class="retail-options">
+            <div class="retail-option">
+              <div class="pct">50% MARGIN</div>
+              <div class="prof">cost ${money(r.totalCost)}</div>
+              <div class="prof">rev ${money(r.rev50)}</div>
+              <div class="prof" style="color:var(--green);font-weight:700;">+${money(r.rev50-r.totalCost)}</div>
+            </div>
+            <div class="retail-option recommended">
+              <div class="pct">55% MARGIN ★</div>
+              <div class="prof">cost ${money(r.totalCost)}</div>
+              <div class="prof">rev ${money(r.rev55)}</div>
+              <div class="prof" style="color:var(--green);font-weight:700;">+${money(r.rev55-r.totalCost)}</div>
+            </div>
+            <div class="retail-option">
+              <div class="pct">60% MARGIN</div>
+              <div class="prof">cost ${money(r.totalCost)}</div>
+              <div class="prof">rev ${money(r.rev60)}</div>
+              <div class="prof" style="color:var(--green);font-weight:700;">+${money(r.rev60-r.totalCost)}</div>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+  }
+
+  // ── Grand totals ──
+  if ($("gt50")) {
+    $("gt50").textContent      = money(grand50rev);
+    $("gt50cost").textContent  = `cost ${money(grandTrueCost)}`;
+    $("gt50profit").textContent = `+${money(grand50rev - grandTrueCost)} profit`;
+    $("gt55").textContent      = money(grand55rev);
+    $("gt55cost").textContent  = `cost ${money(grandTrueCost)}`;
+    $("gt55profit").textContent = `+${money(grand55rev - grandTrueCost)} profit`;
+    $("gt60").textContent      = money(grand60rev);
+    $("gt60cost").textContent  = `cost ${money(grandTrueCost)}`;
+    $("gt60profit").textContent = `+${money(grand60rev - grandTrueCost)} profit`;
+  }
 
   // Order summary
   $("summaryOrderTotal").textContent = money(totalBlanks);
