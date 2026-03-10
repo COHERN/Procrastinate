@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Procrastinator Prints — Retail Pricing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fcfcfc;
+      --text: #111;
+      --muted: #666;
+      --red: #c1121f;
+      --green: #2e7d32;
+      --border: #ddd;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Space Mono", monospace;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      background-image: radial-gradient(rgba(0,0,0,0.012) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    header {
+      text-align: center;
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 { margin: 0; font-size: 18px; letter-spacing: 0.1em; }
+    h1 span { font-size: 12px; color: var(--muted); display: block; margin-top: 4px; letter-spacing: 0.15em; }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 18px 20px 60px;
+    }
+
+    h2 {
+      font-size: 12.5px;
+      letter-spacing: 0.14em;
+      margin: 24px 0 10px;
+    }
+
+    .panel {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      font-size: 12.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    input, select, textarea {
+      padding: 10px;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      font-size: 14px;
+    }
+
+    textarea { resize: vertical; }
+
+    .note {
+      margin-top: 12px;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    button {
+      padding: 10px 16px;
+      font-family: inherit;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      font-size: 13px;
+    }
+
+    button:hover { border-color: var(--red); }
+
+    .btn-add {
+      border-color: var(--red);
+      color: var(--red);
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    /* ── ORDER SUMMARY ── */
+    .order-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .summary-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+
+    .summary-card .label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .summary-card .value {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .summary-card.threshold-ok   { border-color: var(--green); }
+    .summary-card.threshold-ok .value { color: var(--green); }
+    .summary-card.threshold-warn { border-color: var(--red); }
+    .summary-card.threshold-warn .value { color: var(--red); }
+
+    /* ── DESIGN CARDS ── */
+    .designs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .design-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .design-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .design-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .btn-remove {
+      font-size: 11px;
+      color: var(--muted);
+      border-color: var(--border);
+      padding: 4px 10px;
+    }
+
+    .btn-remove:hover { color: var(--red); border-color: var(--red); }
+
+    /* ── RESULTS TABLE ── */
+    .results {
+      margin-top: 14px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    .result-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 16px;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .result-row .rl { color: var(--muted); }
+    .result-row .rv { font-weight: 700; }
+    .result-row.highlight .rv { color: var(--green); font-size: 15px; }
+    .result-row.internal-row { display: none; }
+
+    .show-internal .result-row.internal-row { display: grid; }
+
+    .retail-options {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .retail-option {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .retail-option .pct { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+    .retail-option .price { font-size: 18px; font-weight: 700; margin-top: 3px; }
+    .retail-option .profit { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .retail-option.recommended { border-color: var(--green); background: #f0f7f0; }
+    .retail-option.recommended .price { color: var(--green); }
+
+    /* ── OVERHEAD ── */
+    .overhead-section { margin-bottom: 0; }
+
+    .internalDivider {
+      margin: 32px 0 18px;
+      border: none;
+      border-top: 1px solid var(--border);
+      position: relative;
+    }
+
+    .internalDivider::after {
+      content: "INTERNAL";
+      position: absolute;
+      top: -9px;
+      left: 0;
+      padding-right: 10px;
+      background: var(--bg);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      color: var(--red);
+    }
+
+    .internal-label { color: var(--red); }
+
+    .threshold-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 4px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .threshold-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: var(--red);
+      transition: width 0.3s ease, background 0.3s ease;
+    }
+
+    .threshold-fill.full { background: var(--green); }
+
+    .threshold-note {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .printBar {
+      margin-top: 28px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .printHint {
+      font-size: 12px;
+      color: var(--muted);
+      flex: 1;
+      line-height: 1.45;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #111; --text: #f0f0f0; --muted: #999; --border: #333; }
+      input, select, textarea, .panel, .design-card, .summary-card, .retail-option { background: #1e1e1e; color: #f0f0f0; border-color: #333; }
+      .retail-option.recommended { background: #1a2e1a; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>PROCRASTINATOR PRINTS! <span>RETAIL PRICING TOOL</span></h1>
+</header>
+
+<main>
+
+  <!-- ORDER SUMMARY -->
+  <h2>ORDER SUMMARY</h2>
+  <div class="order-summary">
+    <div class="summary-card" id="cardTotal">
+      <div class="label">Blank Order Total</div>
+      <div class="value" id="summaryOrderTotal">$0.00</div>
+    </div>
+    <div class="summary-card" id="cardShirts">
+      <div class="label">Total Shirts</div>
+      <div class="value" id="summaryShirts">0</div>
+    </div>
+    <div class="summary-card" id="cardDesigns">
+      <div class="label">Designs</div>
+      <div class="value" id="summaryDesigns">0</div>
+    </div>
+    <div class="summary-card" id="cardShipping">
+      <div class="label">Shipping</div>
+      <div class="value" id="summaryShipping">—</div>
+    </div>
+  </div>
+
+  <div class="threshold-bar">
+    <div class="threshold-fill" id="thresholdFill" style="width:0%"></div>
+  </div>
+  <div class="threshold-note" id="thresholdNote">Add designs to reach the $200 free shipping threshold.</div>
+
+  <!-- OVERHEAD (collapsed by default, shown in internal) -->
+  <hr class="internalDivider">
+  <h2 class="internal-label">OVERHEAD SETTINGS</h2>
+  <div class="panel overhead-section">
+    <div class="grid">
+      <label>BIG CARTEL / PLATFORM ($/mo)
+        <input id="ohPlatform" type="number" min="0" step="0.01" value="9.99">
+      </label>
+      <label>DOMAIN ($/mo)
+        <input id="ohDomain" type="number" min="0" step="0.01" value="1.50">
+      </label>
+      <label>PACKAGING MATERIALS ($/mo)
+        <input id="ohPackaging" type="number" min="0" step="0.01" value="15.00">
+      </label>
+      <label>OTHER MONTHLY COSTS
+        <input id="ohOther" type="number" min="0" step="0.01" value="0">
+      </label>
+      <label>EST. SHIRTS SOLD / MONTH
+        <input id="ohUnits" type="number" min="1" value="20">
+      </label>
+      <label>BUFFER %
+        <select id="ohBuffer">
+          <option value="0.05">5%</option>
+          <option value="0.08" selected>8%</option>
+          <option value="0.10">10%</option>
+          <option value="0.15">15%</option>
+        </select>
+      </label>
+    </div>
+    <div class="note" id="overheadNote">—</div>
+  </div>
+
+  <!-- DESIGNS -->
+  <hr class="internalDivider" style="margin-top:8px;">
+  <h2>DESIGNS</h2>
+  <div class="designs-list" id="designsList"></div>
+  <button class="btn-add" id="addDesignBtn" type="button">+ ADD DESIGN</button>
+
+  <!-- PRINT BAR -->
+  <div class="printBar">
+    <button id="calcBtn" type="button" style="border-color:var(--red); color:var(--red); font-weight:700;">UPDATE</button>
+    <div class="printHint">Prices update automatically as you type. Hit UPDATE to force a recalculate.</div>
+  </div>
+
+</main>
+
+<script>
+// ── Internal print costs (same as quote tool) ──────────────────────────────
+const COSTS = {
+  ink:        0.08,
+  labor:      1.25,
+  setup:      35.00,
+  screenPrep: 4.00,
+  spoilage:   10.00
+};
+
+const FREE_SHIP_THRESHOLD = 200.00;
+let designs = [];
+let nextId = 1;
+
+const $ = (id) => document.getElementById(id);
+const money = (n) => `$${(Number(n) || 0).toFixed(2)}`;
+const pct   = (n) => `${(Number(n) || 0).toFixed(1)}%`;
+
+// ── Overhead per shirt ─────────────────────────────────────────────────────
+function calcOverheadPerShirt() {
+  const monthly =
+    (Number($("ohPlatform").value)  || 0) +
+    (Number($("ohDomain").value)    || 0) +
+    (Number($("ohPackaging").value) || 0) +
+    (Number($("ohOther").value)     || 0);
+  const units  = Math.max(1, Number($("ohUnits").value) || 1);
+  const buffer = Number($("ohBuffer").value) || 0.08;
+  return { perShirt: monthly / units, monthly, buffer };
+}
+
+// ── Print cost for one design ──────────────────────────────────────────────
+function calcPrintCost(qty, colors, locs) {
+  const screens = colors * locs;
+  return (
+    (COSTS.ink * colors * locs * qty) +
+    (COSTS.labor * qty) +
+    COSTS.setup +
+    (COSTS.screenPrep * screens) +
+    COSTS.spoilage
+  );
+}
+
+// ── Build a design card DOM ────────────────────────────────────────────────
+function buildCard(d) {
+  const div = document.createElement("div");
+  div.className = "design-card";
+  div.id = `design-${d.id}`;
+  div.innerHTML = `
+    <div class="design-card-header">
+      <div class="design-card-title">DESIGN #${d.id}</div>
+      <button class="btn-remove" type="button" data-id="${d.id}">REMOVE</button>
+    </div>
+    <div class="grid">
+      <label>DESIGN NAME
+        <input type="text" class="d-name" placeholder="e.g. CHICKEN CHAMPIONS" value="${d.name}">
+      </label>
+      <label>GARMENT
+        <input type="text" class="d-garment" placeholder="e.g. GILDAN 5000" value="${d.garment}">
+      </label>
+      <label>GARMENT COLOR
+        <input type="text" class="d-color" placeholder="e.g. RED" value="${d.color}">
+      </label>
+      <label>BLANK COST ($/shirt)
+        <input type="number" class="d-blank" min="0" step="0.01" value="${d.blank}">
+      </label>
+      <label>QTY
+        <input type="number" class="d-qty" min="1" value="${d.qty}">
+      </label>
+      <label>COLORS (1–4)
+        <select class="d-colors">
+          <option value="1" ${d.colors==1?'selected':''}>1</option>
+          <option value="2" ${d.colors==2?'selected':''}>2</option>
+          <option value="3" ${d.colors==3?'selected':''}>3</option>
+          <option value="4" ${d.colors==4?'selected':''}>4</option>
+        </select>
+      </label>
+      <label>PRINT LOCATION
+        <select class="d-locs">
+          <option value="1" ${d.locs==1?'selected':''}>1 LOCATION</option>
+          <option value="2" ${d.locs==2?'selected':''}>2 LOCATIONS</option>
+        </select>
+      </label>
+      <label>ARTWORK FEE ($)
+        <input type="number" class="d-art" min="0" step="0.01" value="${d.art}" placeholder="0.00">
+      </label>
+    </div>
+
+    <div class="results" id="results-${d.id}">
+      <!-- filled by calc -->
+    </div>
+  `;
+
+  // events
+  div.querySelectorAll("input, select").forEach(el => {
+    el.addEventListener("input", calc);
+    el.addEventListener("change", calc);
+  });
+
+  div.querySelector(".btn-remove").addEventListener("click", () => {
+    designs = designs.filter(x => x.id !== d.id);
+    div.remove();
+    calc();
+  });
+
+  return div;
+}
+
+// ── Read values from a card ────────────────────────────────────────────────
+function readCard(id) {
+  const div = $(`design-${id}`);
+  if (!div) return null;
+  return {
+    id,
+    name:    div.querySelector(".d-name").value.trim(),
+    garment: div.querySelector(".d-garment").value.trim(),
+    color:   div.querySelector(".d-color").value.trim(),
+    blank:   Number(div.querySelector(".d-blank").value)  || 0,
+    qty:     Math.max(1, Number(div.querySelector(".d-qty").value) || 1),
+    colors:  Number(div.querySelector(".d-colors").value) || 1,
+    locs:    Number(div.querySelector(".d-locs").value)   || 1,
+    art:     Number(div.querySelector(".d-art").value)    || 0,
+  };
+}
+
+// ── Main calc ─────────────────────────────────────────────────────────────
+function calc() {
+  const oh = calcOverheadPerShirt();
+
+  // Update overhead note
+  $("overheadNote").textContent =
+    `Monthly overhead: ${money(oh.monthly)} ÷ ${$("ohUnits").value} shirts = ${money(oh.perShirt)}/shirt overhead + ${Number($("ohBuffer").value)*100}% buffer`;
+
+  let totalBlanks = 0;
+  let totalShirts = 0;
+  let totalDesigns = 0;
+
+  designs.forEach(d => {
+    const data = readCard(d.id);
+    if (!data) return;
+
+    const blankTotal  = data.blank * data.qty;
+    const printCost   = calcPrintCost(data.qty, data.colors, data.locs);
+    const artPerShirt = data.art / data.qty;
+    const overheadPerShirt = oh.perShirt;
+    const bufferPct   = Number($("ohBuffer").value) || 0.08;
+
+    const baseCost    = (blankTotal + printCost) / data.qty + artPerShirt + overheadPerShirt;
+    const trueCost    = baseCost * (1 + bufferPct);
+
+    const retail50    = trueCost / (1 - 0.50);
+    const retail55    = trueCost / (1 - 0.55);
+    const retail60    = trueCost / (1 - 0.60);
+
+    const profit50    = (retail50 - trueCost) * data.qty;
+    const profit55    = (retail55 - trueCost) * data.qty;
+    const profit60    = (retail60 - trueCost) * data.qty;
+
+    totalBlanks  += blankTotal;
+    totalShirts  += data.qty;
+    totalDesigns += 1;
+
+    // Render results
+    const resultsEl = $(`results-${d.id}`);
+    if (resultsEl) {
+      resultsEl.innerHTML = `
+        <div class="result-row internal-row"><span class="rl">BLANK COST:</span><span class="rv">${money(blankTotal)} (${money(data.blank)}/shirt)</span></div>
+        <div class="result-row internal-row"><span class="rl">PRINT COST:</span><span class="rv">${money(printCost)} (${money(printCost/data.qty)}/shirt)</span></div>
+        <div class="result-row internal-row"><span class="rl">ARTWORK/SHIRT:</span><span class="rv">${money(artPerShirt)}</span></div>
+        <div class="result-row internal-row"><span class="rl">OVERHEAD/SHIRT:</span><span class="rv">${money(overheadPerShirt)}</span></div>
+        <div class="result-row internal-row"><span class="rl">BUFFER (${Number(bufferPct*100).toFixed(0)}%):</span><span class="rv">${money(baseCost * bufferPct)}/shirt</span></div>
+        <div class="result-row"><span class="rl">TRUE COST/SHIRT:</span><span class="rv" style="color:var(--red)">${money(trueCost)}</span></div>
+        <div class="retail-options">
+          <div class="retail-option">
+            <div class="pct">50% MARGIN</div>
+            <div class="price">${money(retail50)}</div>
+            <div class="profit">+${money(profit50)} profit</div>
+          </div>
+          <div class="retail-option recommended">
+            <div class="pct">55% MARGIN ★</div>
+            <div class="price">${money(retail55)}</div>
+            <div class="profit">+${money(profit55)} profit</div>
+          </div>
+          <div class="retail-option">
+            <div class="pct">60% MARGIN</div>
+            <div class="price">${money(retail60)}</div>
+            <div class="profit">+${money(profit60)} profit</div>
+          </div>
+        </div>
+      `;
+      // show internal rows
+      resultsEl.classList.add("show-internal");
+    }
+  });
+
+  // Order summary
+  $("summaryOrderTotal").textContent = money(totalBlanks);
+  $("summaryShirts").textContent     = String(totalShirts);
+  $("summaryDesigns").textContent    = String(totalDesigns);
+
+  // Shipping threshold
+  const pctFilled = Math.min(100, (totalBlanks / FREE_SHIP_THRESHOLD) * 100);
+  $("thresholdFill").style.width = `${pctFilled}%`;
+  $("thresholdFill").classList.toggle("full", totalBlanks >= FREE_SHIP_THRESHOLD);
+
+  const cardShipping = $("cardShipping");
+  if (totalDesigns === 0) {
+    $("summaryShipping").textContent = "—";
+    $("thresholdNote").textContent = "Add designs to reach the $200 free shipping threshold.";
+    cardShipping.classList.remove("threshold-ok", "threshold-warn");
+  } else if (totalBlanks >= FREE_SHIP_THRESHOLD) {
+    $("summaryShipping").textContent = "FREE";
+    $("thresholdNote").textContent = `${money(totalBlanks)} ordered — free shipping threshold met! ✓`;
+    cardShipping.classList.add("threshold-ok");
+    cardShipping.classList.remove("threshold-warn");
+    $("cardTotal").classList.add("threshold-ok");
+    $("cardTotal").classList.remove("threshold-warn");
+  } else {
+    const remaining = FREE_SHIP_THRESHOLD - totalBlanks;
+    $("summaryShipping").textContent = "TBD";
+    $("thresholdNote").textContent = `Add ${money(remaining)} more in blanks to unlock free shipping.`;
+    cardShipping.classList.add("threshold-warn");
+    cardShipping.classList.remove("threshold-ok");
+    $("cardTotal").classList.add("threshold-warn");
+    $("cardTotal").classList.remove("threshold-ok");
+  }
+}
+
+// ── Add design ─────────────────────────────────────────────────────────────
+function addDesign() {
+  const d = { id: nextId++, name: "", garment: "GILDAN 5000", color: "RED", blank: 2.50, qty: 24, colors: 1, locs: 1, art: 0 };
+  designs.push(d);
+  const card = buildCard(d);
+  $("designsList").appendChild(card);
+  calc();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("input, select").forEach(el => {
+    el.addEventListener("input", calc);
+    el.addEventListener("change", calc);
+  });
+
+  $("addDesignBtn").addEventListener("click", addDesign);
+  $("calcBtn").addEventListener("click", calc);
+
+  // Start with one design
+  addDesign();
+  calc();
+});
+</script>
+
+</body>
+</html>
