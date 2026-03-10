@@ -25,12 +25,16 @@
 
     <div class="grid">
 
+      <label>QUOTE NUMBER
+        <input id="quoteNumber" type="text" placeholder="e.g. PRO-001">
+      </label>
+
       <label>CLIENT NAME
         <input id="clientName" type="text" placeholder="e.g. JOHN SMITH">
       </label>
 
       <label>JOB NAME
-        <input id="jobName" type="text" placeholder="e.g. ROUGH DRAFT">
+        <input id="jobName" type="text" placeholder="e.g. CHICKEN CHAMPIONS SHIRTS">
       </label>
 
       <label>QTY (MIN 12)
@@ -60,14 +64,13 @@
       </label>
 
       <label>COLORS (1–4)
-  <select id="colors">
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-  </select>
-</label>
-
+        <select id="colors">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </label>
 
       <label>PRINT LOCATION
         <select id="printLocation">
@@ -94,7 +97,6 @@
       Each additional print location is <strong>+$1.50 / shirt</strong>.
     </div>
 
-    <!-- Upsell lives here — hidden during print with controls -->
     <p id="upsell" style="display:none; margin-top:10px; font-size:0.85em;"></p>
 
   </section>
@@ -113,6 +115,7 @@
     <h2>JOB DETAILS</h2>
 
     <div class="kv">
+      <div>QUOTE:</div><div id="jdQuoteNumber">—</div>
       <div>CLIENT:</div><div id="jdClientName">—</div>
       <div>JOB:</div><div id="jdJobName">—</div>
       <div>DATE ISSUED:</div><div id="jdIssued">—</div>
@@ -121,11 +124,9 @@
       <div>GARMENT:</div><div id="jdGarment">—</div>
       <div>GARMENT COLOR:</div><div id="jdGarmentColor">—</div>
       <div>PRINT COLORS:</div><div id="jdInkColors">—</div>
-      <div>COLORS:</div><div id="jdColors">—</div>
       <div>PRINT LOCATION:</div><div id="jdLocation">—</div>
     </div>
 
-    <!-- Notes shows on printed quote only if filled in -->
     <div id="notesDisplay" style="display:none; margin-top:12px;">
       <strong>NOTES:</strong>
       <p id="jdNotes" style="margin-top:4px;"></p>
@@ -134,26 +135,25 @@
   </section>
 
   <!-- TERMS (ALWAYS VISIBLE) -->
- <section class="terms">
-  <h2>TERMS & PRICING NOTES</h2>
-  <p style="font-size:11px; letter-spacing:0.1em; color:var(--red); margin-bottom:8px;">
-    THIS IS A QUOTE ONLY — NOT AN INVOICE
-  </p>
-  <p>
-    Pricing is based on the print details listed above.<br>
-    <span id="termsMin">Screen printing has a minimum of 12 pieces and a maximum of 72 pieces per order. For larger orders please contact us for contractor pricing.</span><br>
-    Any changes to print colors or locations will require an updated quote.
-  </p>
-  <p class="bold">
-    A 50% non-refundable deposit is required to begin production.<br>
-    The remaining balance is due at delivery.<br>
-    A payment link will be sent once this quote is approved.
-  </p>
-  <p style="margin-top:16px; font-size:12px; color:var(--muted);">
-    www.procrastinatorprints.com
-  </p>
-</section>
-
+  <section class="terms">
+    <h2>TERMS & PRICING NOTES</h2>
+    <p style="font-size:11px; letter-spacing:0.1em; color:var(--red); margin-bottom:8px;">
+      THIS IS A QUOTE ONLY — NOT AN INVOICE
+    </p>
+    <p>
+      Pricing is based on the print details listed above.<br>
+      <span id="termsMin">Screen printing has a minimum of 12 pieces and a maximum of 72 pieces per order. For larger orders please contact us for contractor pricing.</span><br>
+      Any changes to print colors or locations will require an updated quote.
+    </p>
+    <p class="bold">
+      A 50% non-refundable deposit is required to begin production.<br>
+      The remaining balance is due at delivery.<br>
+      A payment link will be sent once this quote is approved.
+    </p>
+    <p style="margin-top:16px; font-size:12px; color:var(--muted);">
+      www.procrastinatorprints.com
+    </p>
+  </section>
 
   <!-- INTERNAL (VISIBLE IN WORKING VIEW; REMOVED DURING PRINT) -->
   <hr id="internalDivider" class="internalDivider">
@@ -175,10 +175,11 @@
   <!-- BUTTONS -->
   <div class="printBar">
     <button id="calcBtn" type="button">UPDATE QUOTE</button>
+    <button id="copyBtn" type="button">COPY</button>
     <button id="printBtn" type="button">PRINT</button>
     <div class="printHint">
-      UPDATE QUOTE recalculates all fields manually. PRINT hides internal numbers and edit controls so you can screenshot or print a clean quote.
-      (To remove the URL/date footer, disable "Headers and footers" in your browser's print settings.)
+      UPDATE recalculates. COPY saves a line to your clipboard for your master sheet. PRINT hides internal numbers for a clean quote.
+      (Disable "Headers and footers" in print settings to remove the URL/date footer.)
     </div>
   </div>
 

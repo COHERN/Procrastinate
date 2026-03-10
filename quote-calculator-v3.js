@@ -1,13 +1,13 @@
-// Procrastinator Prints — Quote Calculator v4
+// Procrastinator Prints — Quote Calculator v5
 // Working view shows internals.
 // PRINT hides internals + controls so you can screenshot or print cleanly.
 
-// ── Internal cost assumptions (adjust as needed) ──────────────────────────
+// ── Internal cost assumptions ──────────────────────────────────────────────
 const COSTS = {
   ink:        0.08,   // per color per location per shirt
   labor:      1.25,   // per shirt
   setup:      35.00,  // flat per job
-  screenPrep: 4.00,   // per screen per job (screens = colors × locations)
+  screenPrep: 4.00,   // per screen per job
   spoilage:   10.00   // flat per job
 };
 
@@ -16,10 +16,10 @@ const PRICING = {
   minQty:         12,
   maxQty:         72,
   maxColors:       4,
-  targetMargin: 0.45,   // 45% — price auto-calculated from cost + this margin
-  ceilPerShirt: 25.00,  // never quote above this per shirt
-  extraColor:    2.00,  // per shirt per extra color beyond 1
-  extraLocation: 1.50,  // per shirt per extra location beyond 1
+  targetMargin: 0.45,
+  ceilPerShirt: 25.00,
+  extraColor:    2.00,
+  extraLocation: 1.50,
 };
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -69,7 +69,7 @@ function upsellMessage(qty, per, blank, colors, locationCount) {
     (extraLocations * PRICING.extraLocation)
   );
 
-  const saving = Number((per - nextPer).toFixed(2)); // FIX: cast to Number for correct comparison
+  const saving = Number((per - nextPer).toFixed(2));
   if (saving <= 0) return "";
 
   const extraShirts = nextQty - qty;
@@ -86,11 +86,10 @@ function calc() {
   qty = Math.min(PRICING.maxQty, Math.max(PRICING.minQty, Math.floor(qty)));
   $("qty").value = String(qty);
 
-  // Qty warning — only fires if user typed out of range before clamp
+  // Qty warning
   const qtyWarning = $("qtyWarning");
   if (qtyWarning) {
-    const raw = Number($("qty").value);
-    if (raw >= PRICING.maxQty) {
+    if (qty >= PRICING.maxQty) {
       qtyWarning.textContent = `Maximum order is ${PRICING.maxQty} shirts. Contact us for larger orders.`;
       qtyWarning.style.display = "block";
     } else {
@@ -98,11 +97,8 @@ function calc() {
     }
   }
 
-  // Colors — clamp 1–4
-  let colors = Number($("colors").value);
-  if (!Number.isFinite(colors)) colors = 1;
-  colors = Math.min(PRICING.maxColors, Math.max(1, Math.floor(colors)));
-  $("colors").value = String(colors);
+  // Colors
+  const colors = Number($("colors").value) || 1;
 
   // Locations
   const locationCount = getLocationCount();
@@ -144,17 +140,17 @@ function calc() {
   $("perShirt").textContent = `${money(per)} / SHIRT`;
   $("total").textContent    = `${money(total)} TOTAL`;
 
-  // ── Render job details (client-safe) ──
-  $("jdClientName").textContent   = $("clientName").value.trim() || "—";
-  $("jdJobName").textContent      = $("jobName").value.trim() || "—";
+  // ── Render job details ──
+  $("jdQuoteNumber").textContent  = $("quoteNumber").value.trim() || "—";
+  $("jdClientName").textContent   = $("clientName").value.trim()  || "—";
+  $("jdJobName").textContent      = $("jobName").value.trim()     || "—";
   $("jdQty").textContent          = String(qty);
   $("jdGarment").textContent      = $("garment").selectedOptions[0].text;
   $("jdGarmentColor").textContent = $("garmentColor").value.trim() || "—";
-  $("jdInkColors").textContent    = $("inkColors").value.trim() || "—";
-  $("jdColors").textContent       = String(colors);
+  $("jdInkColors").textContent    = $("inkColors").value.trim()   || "—";
   $("jdLocation").textContent     = $("printLocation").selectedOptions[0].text;
 
-  // ── Notes — only show if filled in ──
+  // ── Notes ──
   const notesVal     = $("notes").value.trim();
   const notesDisplay = $("notesDisplay");
   if (notesDisplay) {
@@ -166,7 +162,7 @@ function calc() {
     }
   }
 
-  // ── Render internal ──
+  // ── Internal ──
   $("profit").textContent    = money(profit);
   $("marginPct").textContent = `${marginPct.toFixed(1)}%`;
 
@@ -180,7 +176,7 @@ function calc() {
     <li><strong>TOTAL COST: ${money(internal)}</strong></li>
   `;
 
-  // ── Upsell callout ──
+  // ── Upsell ──
   const upsellEl = $("upsell");
   if (upsellEl) {
     const msg = upsellMessage(qty, per, blank, colors, locationCount);
@@ -188,11 +184,35 @@ function calc() {
     upsellEl.style.display = msg ? "block" : "none";
   }
 
-  // ── Update terms min/max dynamically ──
+  // ── Terms ──
   const termsMin = $("termsMin");
   if (termsMin) {
     termsMin.textContent = `Screen printing has a minimum of ${PRICING.minQty} pieces and a maximum of ${PRICING.maxQty} pieces per order. For larger orders please contact us for contractor pricing.`;
   }
+}
+
+// ── Copy to clipboard ──────────────────────────────────────────────────────
+function copyQuote() {
+  const num    = $("quoteNumber").value.trim() || "PRO-???";
+  const client = $("clientName").value.trim()  || "—";
+  const job    = $("jobName").value.trim()      || "—";
+  const qty    = $("qty").value;
+  const per    = $("perShirt").textContent;
+  const total  = $("total").textContent;
+  const date   = $("jdIssued").textContent;
+  const valid  = $("validThrough").textContent;
+
+  const text =
+    `${num} | ${client} | ${job} | ${date}\n` +
+    `${qty} shirts | ${per} | ${total} | Valid through ${valid}`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = $("copyBtn");
+    btn.textContent = "COPIED ✓";
+    setTimeout(() => btn.textContent = "COPY", 2000);
+  }).catch(() => {
+    alert("Copy failed — try a different browser.");
+  });
 }
 
 // ── Print ──────────────────────────────────────────────────────────────────
@@ -207,17 +227,14 @@ function doPrint() {
 
 // ── Init ───────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-
-  // FIX: include textarea in live update listeners
   document.querySelectorAll("input, select, textarea").forEach(el => {
     el.addEventListener("change", calc);
     el.addEventListener("input",  calc);
   });
 
-  $("printBtn").addEventListener("click", doPrint);
-
-  // FIX: wire up the Update Quote button
   $("calcBtn").addEventListener("click", calc);
+  $("copyBtn").addEventListener("click", copyQuote);
+  $("printBtn").addEventListener("click", doPrint);
 
   calc();
 });

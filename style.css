@@ -196,19 +196,3 @@ body.printing .printBar {
   #controlsPanel, #internalDivider, #internal, .printBar { display: none !important; }
   body { background: #fff !important; background-image: none !important; }
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #111;
-    --text: #f0f0f0;
-    --muted: #999;
-    --border: #333;
-  }
-
-  input, select, textarea, .controlsPanel {
-    background: #1e1e1e;
-    color: #f0f0f0;
-    border-color: #333;
-  }
-}
-
