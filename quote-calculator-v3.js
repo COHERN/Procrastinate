@@ -1,14 +1,12 @@
-// Procrastinator Prints — Quote Calculator v5
-// Working view shows internals.
-// PRINT hides internals + controls so you can screenshot or print cleanly.
+// Procrastinator Prints — Quote Calculator v6
 
 // ── Internal cost assumptions ──────────────────────────────────────────────
 const COSTS = {
-  ink:        0.08,   // per color per location per shirt
-  labor:      1.25,   // per shirt
-  setup:      35.00,  // flat per job
-  screenPrep: 4.00,   // per screen per job
-  spoilage:   10.00   // flat per job
+  ink:        0.08,
+  labor:      1.25,
+  setup:      35.00,
+  screenPrep: 4.00,
+  spoilage:   10.00
 };
 
 // ── Pricing rules ──────────────────────────────────────────────────────────
@@ -17,7 +15,7 @@ const PRICING = {
   maxQty:         72,
   maxColors:       4,
   targetMargin: 0.45,
-  ceilPerShirt: 25.00,
+  ceilPerShirt: 30.00,  // raised from $25
   extraColor:    2.00,
   extraLocation: 1.50,
 };
@@ -80,11 +78,13 @@ function upsellMessage(qty, per, blank, colors, locationCount) {
 // ── Main calc ──────────────────────────────────────────────────────────────
 function calc() {
 
-  // Quantity — clamp to min/max
+  // Quantity — only clamp and write back when field is not focused
   let qty = Number($("qty").value);
-  if (!Number.isFinite(qty)) qty = PRICING.minQty;
+  if (!Number.isFinite(qty) || qty < 1) qty = PRICING.minQty;
   qty = Math.min(PRICING.maxQty, Math.max(PRICING.minQty, Math.floor(qty)));
-  $("qty").value = String(qty);
+  if (document.activeElement !== $("qty")) {
+    $("qty").value = String(qty);
+  }
 
   // Qty warning
   const qtyWarning = $("qtyWarning");
